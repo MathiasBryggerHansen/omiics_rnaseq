@@ -1,0 +1,54 @@
+#' Reads in the count files
+#' Handles if the files are separate for each sample, the zipped folder is unzipped and the data combined.
+#'
+#' @param input UI data including the amount datasets (nfiles)
+#' @export input_d
+#'
+#' @return list of "count", "pheno" and "circ" (if circRNA data is included)
+
+input_d <- function(input){
+  files <- list()
+  for( d in 1:input$nfiles){
+    if(input[[paste0("combined",d)]]){#test for combined text file
+      print(d)
+      counts_data <- read.csv(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!") #comment.char = "!" in CEL files
+    }
+    else{
+      d_path <- input[[paste0("count",d)]][["datapath"]]
+      temp_dir <- paste0("./temp",d)
+      unlink(temp_dir, recursive=TRUE,force = T) #remove if exists
+      dir.create(temp_dir)
+      unzip(d_path,exdir = temp_dir,overwrite = T)
+      dir_name <- list.files(temp_dir)
+      counts_data <- read_files(paste0(temp_dir,"/",dir_name),d)
+    }
+    if(!is.null(input[[paste0("circRNA",d)]])){#test circ data
+      circ_data <- read.csv(input[[paste0("circRNA",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!") #comment.char = "!" in CEL files
+    }
+    else{
+      circ_data <- NULL
+    }
+
+    if(input$gene_filter){
+      counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
+    }
+    pheno_data <- read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T)#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
+    if(input$gene_id_col & input[[paste0("combined",d)]]){
+      row.names(counts_data) <- make.names(counts_data[,1],unique = T)
+      counts_data[,1] <- NULL
+    }
+    pheno_keep <- grepl(colnames(counts_data),pattern = paste(pheno_data[[2]],collapse = "|"))
+    ids <- row.names(counts_data)
+    if(!grepl(ids[1],pattern = "ENS")){
+      ids <- probe_library()$ensembl_gene_id[match(x = ids, probe_library()$probe)]
+      row.names(counts_data) <- make.names(ids,unique = T)
+    }
+    counts_data <- counts_data[,c(pheno_keep)]#colnames(counts_data)%in%pheno_data[[2]]] #remove samples not in pheno
+    colnames(counts_data) <- pheno_data[[2]]
+    counts_data <- counts_data[order(row.names(counts_data)),] #a way to secure compatible order????
+    files[[paste0("count",d)]] <- counts_data
+    files[[paste0("pheno",d)]] <- pheno_data
+    files[[paste0("circRNA",d)]] <- circ_data
+  }
+  return(files)
+}
