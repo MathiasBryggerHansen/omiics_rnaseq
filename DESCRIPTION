@@ -1,7 +1,7 @@
 Package: omiicsRNAseq
 Title: What The Package Does (one line, title case required)
 Version: 0.1
-Authors@R: person("Mathias", "Hansen", email = mbh@omiics.com",
+Authors@R: person("Mathias", "Hansen", email = "mbh@omiics.com",
                   role = c("aut", "cre"))
 Description: RNAseq DE Analysis.
 Depends: R (>= 3.1.0), shiny
