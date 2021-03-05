@@ -1,11 +1,11 @@
 Package: omiicsRNAseq
 Title: What The Package Does (one line, title case required)
 Version: 0.1
-Authors@R: person("First", "Last", email = "first.last@example.com",
+Authors@R: person("Mathias", "Hansen", email = mbh@omiics.com",
                   role = c("aut", "cre"))
-Description: What the package does (one paragraph)
+Description: RNAseq DE Analysis.
 Depends: R (>= 3.1.0), shiny
-License: What license is it under?
+License: GPL
 LazyData: true
 RoxygenNote: 7.1.1
 Imports: 
