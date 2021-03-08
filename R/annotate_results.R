@@ -23,7 +23,7 @@ annotate_results <- function(input, data,ensembl2id,pathway_dic,circ = F){
   data <- merge(data,ensembl2id,by = "ensembl_gene_id",all.x = T)#ensembl2id() includes : gene_symbol, wiki_id, biotype
   data$gene_symbol <- gsub(make.names(ifelse(is.na(data$gene_symbol)|data$gene_symbol=="",data$ensembl_gene_id,data$gene_symbol),unique = T),pattern = ".",replacement = "-",fixed = T)
   if(input$species == "human"|input$species == "mouse"){ #Transcription factor annotation
-    tf_data <- read.table(paste0("../../data/trrust_rawdata.",input$species,".tsv"),header = T) #this should be more general
+    tf_data <- read.table(paste0("data/trrust_rawdata.",input$species,".tsv"),header = T) #this should be more general
     tf_data$position <- NULL
     data$TF <- data$gene_symbol%in%tf_data$gene_symbol
     print("TF")
