@@ -10,7 +10,6 @@ input_d <- function(input){
   files <- list()
   for( d in 1:input$nfiles){
     if(input[[paste0("combined",d)]]){#test for combined text file
-      print(d)
       counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
     }
     else{
