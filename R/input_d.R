@@ -11,7 +11,7 @@ input_d <- function(input){
   for( d in 1:input$nfiles){
     if(input[[paste0("combined",d)]]){#test for combined text file
       print(d)
-      counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!") #comment.char = "!" in CEL files
+      counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
     }
     else{
       d_path <- input[[paste0("count",d)]][["datapath"]]
@@ -23,7 +23,7 @@ input_d <- function(input){
       counts_data <- read_files(paste0(temp_dir,"/",dir_name),d)
     }
     if(!is.null(input[[paste0("circRNA",d)]])){#test circ data
-      circ_data <- read.csv2(input[[paste0("circRNA",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!") #comment.char = "!" in CEL files
+      circ_data <- read.csv2(input[[paste0("circRNA",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
     }
     else{
       circ_data <- NULL
@@ -32,7 +32,7 @@ input_d <- function(input){
     if(input$gene_filter){
       counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
     }
-    pheno_data <- read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T)#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
+    pheno_data <- read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T,stringsAsFactors = F)#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
     if(input$gene_id_col & input[[paste0("combined",d)]]){
       row.names(counts_data) <- make.names(counts_data[,1],unique = T)
       counts_data[,1] <- NULL
