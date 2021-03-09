@@ -16,7 +16,8 @@ count2deseq_analysis <- function(input, countdata, pheno){
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
   phenotypes <- pheno[[1]]
-  cat(file=stderr(), input$batch_correction)
+  cat(file=stderr(), paste0(c(input$batch_correction,"\n"),collapse = ""))
+  cat(file=stderr(), paste0(c("pheno ",phenotypes[1:10],"\n"),collapse = ""))
   cat(file=stderr(), phenotypes[1:3])
   if(input$batch_correction&ncol(pheno)>1){#values need to be updated if batch correction is chosen
     batch <- pheno[[2]]
