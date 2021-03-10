@@ -1,5 +1,5 @@
 Package: omiicsRNAseq
-Title: What The Package Does (one line, title case required)
+Title: DE Analysis
 Version: 0.1
 Authors@R: person("Mathias", "Hansen", email = "mbh@omiics.com",
                   role = c("aut", "cre"))
