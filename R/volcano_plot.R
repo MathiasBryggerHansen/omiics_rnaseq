@@ -6,18 +6,11 @@
 #' @import ggplot2 plotly
 
 volcano_plot <- function(input, data, pathway_dic){
+
   data$circToLin <- NULL
   data$sum_lin <- NULL
   data$sum_junction <- NULL
   col_nr <- grep(colnames(data),pattern = gsub(input$volcano_col,pattern = "-",replacement = "_"))[1]
-  print(colnames(data))
-  print("search term: ")
-  print(input$volcano_col)
-  print("grep returns ")
-  print(col_nr)
-  print("grep('log2FoldChange_E_GEOD_51415', pattern = 'E_GEOD_51415')")
-  print(grep('log2FoldChange_E_GEOD_51415', pattern = 'E_GEOD_51415'))
-
   col_vals <- c(data[,col_nr])
 
   #req(length(unique(col_vals)) < 100)
@@ -41,7 +34,7 @@ volcano_plot <- function(input, data, pathway_dic){
     col_vals <- factor(col_vals)
     legend_name <- colnames(data)[col_nr]
   }
-  print("ggplot")
+
   g <- ggplot(data = data) +
     geom_hline(yintercept = -log10(eval(parse(text = input$p))), linetype="dashed") +
     geom_vline(xintercept = -log2(input$fc), linetype="dashed") +
