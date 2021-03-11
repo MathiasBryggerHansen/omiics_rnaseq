@@ -34,7 +34,7 @@ volcano_plot <- function(input, data, pathway_dic){
     col_vals <- factor(col_vals)
     legend_name <- colnames(data)[col_nr]
   }
-
+  experiment_id <- gsub(input$experiment_id,pattern = "-",replacement = "_")
   g <- ggplot(data = data) +
     geom_hline(yintercept = -log10(eval(parse(text = input$p))), linetype="dashed") +
     geom_vline(xintercept = -log2(input$fc), linetype="dashed") +
@@ -46,29 +46,29 @@ volcano_plot <- function(input, data, pathway_dic){
       axis.title = element_text(size = rel(1.25))) +
     labs(color = legend_name) +
     if(input$experiment_id!=""){
-      temp <- colnames(data)[grep(colnames(data),pattern = input$experiment_id)]
-      new_padj <- colnames(data)[grep(colnames(data),pattern = input$experiment_id)[grep(temp,pattern = "padj")]]
-      new_fc <- colnames(data)[grep(colnames(data),pattern = input$experiment_id)[grep(temp,pattern = "log2")]]
+      temp <- colnames(data)[grep(colnames(data),pattern = experiment_id)]
+      new_padj <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "padj")]]
+      new_fc <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "log2")]]
       temp2 <- paste0("`),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
       eval(parse(text = paste0("geom_point(data=data,aes(x=`",new_fc,"`, y=-log10(`",new_padj,temp2)))
     }
-  else{
-    temp2 <- paste0("),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
-    eval(parse(text = paste0("geom_point(data=data,aes(x=log2FoldChange, y=-log10(padj",temp2)))
-  }
-  if(sum(sapply(col_vals,is.numeric))>10){
-    req(isColor(input$col_high)&isColor(input$col_low))
-    g <- g + scale_color_gradient(high = input$col_high, low = input$col_low)
-  }
-  test <- ggplotly(g,tooltip = "text") %>%
-    config(
-      toImageButtonOptions = list(
-        format = "svg",
-        filename = "volcanoplot",
-        width = 1500,
-        height = 1000
-      )
-    ) %>% event_register('plotly_selected')
+    else{
+      temp2 <- paste0("),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
+      eval(parse(text = paste0("geom_point(data=data,aes(x=log2FoldChange, y=-log10(padj",temp2)))
+    }
+    if(sum(sapply(col_vals,is.numeric))>10){
+      req(isColor(input$col_high)&isColor(input$col_low))
+      g <- g + scale_color_gradient(high = input$col_high, low = input$col_low)
+    }
+    test <- ggplotly(g,tooltip = "text") %>%
+      config(
+        toImageButtonOptions = list(
+          format = "svg",
+          filename = "volcanoplot",
+          width = 1500,
+          height = 1000
+        )
+      ) %>% event_register('plotly_selected')
   print("return")
   return(test)
 }

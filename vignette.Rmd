@@ -1,0 +1,108 @@
+---
+title: "omiics intro"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(plotly)
+library(omiicsRNAseq)
+library(shiny)
+library(heatmaply)
+library(DT)
+```
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+```{r eruptions, echo=FALSE}
+# inputPanel(
+#   selectInput("n_breaks", label = "Number of bins:",
+#               choices = c(10, 20, 35, 50), selected = 20),
+#   
+#   sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+#               min = 0.2, max = 2, value = 1, step = 0.2)
+# )
+# 
+# renderPlot({
+#   hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+#        xlab = "Duration (minutes)", main = "Geyser eruption duration")
+#   
+#   dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+#   lines(dens, col = "blue")
+# })
+```
+
+## Interactive Volcano Plot
+
+Here is an example of a volcano plot.
+
+```{r volcano, echo=FALSE}
+shinyAppDir(
+  #system.file(package = "omiicsRNAseq"),
+  "../omiics_shiny/volcano",
+  options = list(
+    width = "200%", height = 550
+  )
+)
+```
+
+On the left side is the parameter section, where you make changes that influences the information shown on the plot. `p cutoff` and `FC cutoff` will set the parameter which the analysis handles significance (only genes with $p_{gene} < p cutoff$ and $abs(FC)_{gene} > abs(FC cutoff))$, and is visualized as a vertical dotted line. Changing `p cutoff` and `FC cutoff` will not have a big effect in this toy example, but in the context of the full app, will change the genes considered significant, and used for enrichment analysis. To increase efficiency only 10 percent of the  non-significant genes are included in the plot. This gives the impression that there is a border between the cutoffs and the amount of genes, but this is an artifact from the filtering. The `Use alternative dataset for volcano plot` parameter takes a string that searches for data columns matching with alternative data. This will plot the data found. In this example there is a dataset from the Gene Expression Atlas Database, downloaded and analyzed within the app. You can find it by searching for parts of the id `E-GEOD-48812` - give it a try. When searching for columns you can use regular expressions, `.*` is a wildcard indicating zero or more characters of any kind. 
+By hovering your cursor over the data points, information for each data point will be shown. In the top right corner of the plot you will have options to zoom, export the plot and more. The options are extended in the full app.  
+
+
+## Gene to gene correlation hatmap
+
+Here is an example of a gene to gene correlation heatmap.
+
+```{r gene_gene, echo=FALSE}
+shinyAppDir(
+  #system.file(package = "omiicsRNAseq"),
+  "../omiics_shiny/gene_gene_heatmap",
+  options = list(
+    width = "200%", height = 550
+  )
+)
+```
+
+This is a heatmap showing spearman correlation of normalized expression between a selection of genes. It can be useful to get an idea of how tightly the genes in question are regulated. This plot is a bit cluttered, by selecting a subset with your cursor, you can reduce the amount of data shown. By hovering the cursor over the plot you get information on what genes are being compared, and what spearman correlation they have. The toy data set is not the largest, and in general the correlation should be used for hypothesis generation and overview - especially with small datasets, some of the values will not be significant.
+
+
+## PCA
+
+Here is an example of a sample level PCA.
+
+```{r pca, echo=FALSE}
+shinyAppDir(
+  #system.file(package = "omiicsRNAseq"),
+  "../omiics_shiny/pca",
+  options = list(
+    width = "200%", height = 550
+  )
+)
+```
+
+The sample level PCA can help discover outliers and general similarities. You can rotate the view with the cursor and zoom by scrolling. The color annotation indicates case control in this example, and each sample has an ID which can be visualized by hovering the cursor.
+
+
+## Differential Expression Results Table
+
+This is a table of the differential expression analysis.
+
+```{r DE, echo=FALSE}
+shinyAppDir(
+  #system.file(package = "omiicsRNAseq"),
+  "../omiics_shiny/DETable",
+  options = list(
+    width = "200%", height = 550
+  )
+)
+```
+
+Besides from including DE results for each gene, the gene is also annotated with information on the gene biotype, whether the gene is a transcription factor, and several databases which may have biological information on the gene. This is followed by a link which you can click, and get a overview of the given gene. The table also includes any secondary data.
+You can filter the dataset by interacting with the different fields at the top of each column or the global one. You can for example search for "cancer" in the global search field to filter for genes that are known to be involved with cancer. You can also filter the secondary data for significant p-values. In this way you can find overlapping significant results between different DE analyses.   
