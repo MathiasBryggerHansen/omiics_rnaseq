@@ -16,9 +16,11 @@ search_Atlas <- function(input, atlas_id = F, probe_library = probe_library()) {
     if(atlas_id){
       acc <- strsplit(gsub(input$Atlas_ids,pattern = " ",replacement = ""),split = ",")
       tryCatch({
+        print("trying")
         allExps <- getAtlasData(acc)
       },
       error=function(cond){
+        print("error")
         showNotification("No results found for the given query",type = "message")
         return(NULL)
       })
@@ -28,14 +30,16 @@ search_Atlas <- function(input, atlas_id = F, probe_library = probe_library()) {
       showNotification(paste("Contacting server... This may take a while"),type = "message")
       atlasRes <- searchAtlasExperiments(properties = input$atlas_query, species = input$species)
       tryCatch({
+        print("trying")
         allExps <- getAtlasData(acc)
       },
       error=function(cond){
+        print("error")
         showNotification("No results found for the given query",type = "message")
         return(NULL)
       })
     }
-
+    print("continuing")
     for(fi in names(allExps)){
       try({
         showNotification(paste("Analyzing",fi),type = "message")
