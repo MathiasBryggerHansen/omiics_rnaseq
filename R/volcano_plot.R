@@ -10,9 +10,9 @@ volcano_plot <- function(input, data, pathway_dic){
   data$circToLin <- NULL
   data$sum_lin <- NULL
   data$sum_junction <- NULL
-  print(colnames(data))
+  #print(colnames(data))
   col_nr <- grep(colnames(data),pattern = gsub(input$volcano_col,pattern = "-",replacement = "_"))[1]
-  print(col_nr)
+  #print(col_nr)
   col_vals <- c(data[,col_nr])
 
   #req(length(unique(col_vals)) < 100)
@@ -71,6 +71,5 @@ volcano_plot <- function(input, data, pathway_dic){
           height = 1000
         )
       ) %>% event_register('plotly_selected')
-  print("return")
   return(test)
 }
