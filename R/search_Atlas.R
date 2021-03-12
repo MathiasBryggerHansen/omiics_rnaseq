@@ -13,15 +13,19 @@ search_Atlas <- function(input, atlas_id = F, probe_library = probe_library()) {
   res <- list()
   p <- NULL
   #uses probe library to convert probes to ensembl gene id
-  try({
     if(atlas_id){
       acc <- strsplit(gsub(input$Atlas_ids,pattern = " ",replacement = ""),split = ",")
-      allExps <- getAtlasData(acc)
+      tryCatch({
+        allExps <- getAtlasData(acc)
+      }, finally = return(NULL))
+
     }
     else{
       showNotification(paste("Contacting server... This may take a while"),type = "message")
       atlasRes <- searchAtlasExperiments(properties = input$atlas_query, species = input$species)
-      allExps <- getAtlasData(atlasRes$Accession)
+      tryCatch({
+        allExps <- getAtlasData(atlasRes$Accession)
+      }, finally = return(NULL))
       showNotification(paste("Found",length(names(allExps)),"Atlas search results..."),type = "message")
     }
 
@@ -62,7 +66,5 @@ search_Atlas <- function(input, atlas_id = F, probe_library = probe_library()) {
     }
     ##clean up
     remove(allExps)
-  })
-
   return(res)
 }
