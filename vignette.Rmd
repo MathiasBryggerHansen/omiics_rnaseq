@@ -14,6 +14,8 @@ library(DT)
 
 # Intro to the omiics DE analysis app
 
+This introduction will give an overview of some of the features of the omiics app. 
+
 ## Interactive Volcano Plot
 
 Here is an example of a volcano plot.
