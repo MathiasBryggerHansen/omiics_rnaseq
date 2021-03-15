@@ -54,11 +54,11 @@ volcano_plot <- function(input, data, pathway_dic){
       new_padj <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "padj")]]
       new_fc <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "log2")]]
       temp2 <- paste0("`),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
-      eval(parse(text = paste0("geom_point(data=data,aes(alpha = gsub(',','.',replace = input$alpha), x=`",new_fc,"`, y=-log10(`",new_padj,temp2)))
+      eval(parse(text = paste0("geom_point(data=data,aes(alpha = gsub(',','.',",input$alpha,"), x=`",new_fc,"`, y=-log10(`",new_padj,temp2)))
     }
   else{
     temp2 <- paste0("),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
-    eval(parse(text = paste0("geom_point(data=data,aes(alpha = gsub(',','.',replace = input$alpha, x=log2FoldChange, y=-log10(padj",temp2)))
+    eval(parse(text = paste0("geom_point(data=data,aes(alpha = gsub(',','.',",input$alpha,"), x=log2FoldChange, y=-log10(padj",temp2)))
   }
   if(sum(sapply(col_vals,is.numeric))>10){
     if(!isColor(input$col_high)|!isColor(input$col_low)){
