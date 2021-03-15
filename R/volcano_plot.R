@@ -12,9 +12,11 @@ volcano_plot <- function(input, data, pathway_dic){
   data$sum_junction <- NULL
   cat(colnames(data))
   col_nr <- grep(colnames(data),pattern = gsub(input$volcano_col,pattern = "-",replacement = "_"))[1]
-  cat(col_nr)
   col_vals <- c(data[,col_nr])
-
+  if(length(unique(col_vals)) > 30){ #avoid matching with overwhelming annotation
+    showNotification("the matching term exceeds 30 and does not work as color annotation.","message")
+    col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
+  }
   #req(length(unique(col_vals)) < 100)
   if(sum(sapply(col_vals,is.numeric))>10){
     if(input$log_scale){
