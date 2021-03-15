@@ -14,7 +14,7 @@ volcano_plot <- function(input, data, pathway_dic){
   col_nr <- grep(colnames(data),pattern = gsub(input$volcano_col,pattern = "-",replacement = "_"))[1]
   col_vals <- c(data[,col_nr])
   if(length(unique(col_vals)) > 30){ #avoid matching with overwhelming annotation
-    showNotification("the matching term exceeds 30 and does not work as color annotation.","message")
+    showNotification("the matching term exceeds 30 unique identifiers and does not work as color annotation",type = "message")
     col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
   }
   #req(length(unique(col_vals)) < 100)
@@ -54,13 +54,16 @@ volcano_plot <- function(input, data, pathway_dic){
       new_padj <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "padj")]]
       new_fc <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "log2")]]
       temp2 <- paste0("`),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
-      eval(parse(text = paste0("geom_point(data=data,aes(x=`",new_fc,"`, y=-log10(`",new_padj,temp2)))
+      eval(parse(text = paste0("geom_point(data=data,aes(alpha = input$alpha, x=`",new_fc,"`, y=-log10(`",new_padj,temp2)))
     }
   else{
     temp2 <- paste0("),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
-    eval(parse(text = paste0("geom_point(data=data,aes(x=log2FoldChange, y=-log10(padj",temp2)))
+    eval(parse(text = paste0("geom_point(data=data,aes(alpha = input$alpha, x=log2FoldChange, y=-log10(padj",temp2)))
   }
   if(sum(sapply(col_vals,is.numeric))>10){
+    if(!isColor(input$col_high)|!isColor(input$col_low)){
+      showNotification("One or both colors are not considered real",type = "message")
+    }
     req(isColor(input$col_high)&isColor(input$col_low))
     g <- g + scale_color_gradient(high = input$col_high, low = input$col_low)
   }
