@@ -13,10 +13,6 @@ volcano_plot <- function(input, data, pathway_dic){
   cat(colnames(data))
   col_nr <- grep(colnames(data),pattern = gsub(input$volcano_col,pattern = "-",replacement = "_"))[1]
   col_vals <- c(data[,col_nr])
-  if(length(unique(col_vals)) > 30){ #avoid matching with overwhelming annotation
-    showNotification("the matching term exceeds 30 unique identifiers and does not work as color annotation",type = "message")
-    col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
-  }
   #req(length(unique(col_vals)) < 100)
   if(sum(sapply(col_vals,is.numeric))>10){
     if(input$log_scale){
@@ -35,6 +31,10 @@ volcano_plot <- function(input, data, pathway_dic){
     }
   }
   else {
+    if(length(unique(col_vals)) > 30){ #avoid matching with overwhelming annotation
+      showNotification("the matching term exceeds 30 unique identifiers and does not work as color annotation",type = "message")
+      col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
+    }
     col_vals <- factor(col_vals)
     legend_name <- colnames(data)[col_nr]
   }
@@ -63,11 +63,17 @@ volcano_plot <- function(input, data, pathway_dic){
   if(sum(sapply(col_vals,is.numeric))>10){
     if(!isColor(input$col_high)|!isColor(input$col_low)){
       showNotification("One or both colors are not considered real",type = "message")
+      h <- "red"
+      l <- "blue"
     }
-    req(isColor(input$col_high)&isColor(input$col_low))
-    g <- g + scale_color_gradient(high = input$col_high, low = input$col_low)
+    else {
+      h <- input$col_high
+      l <- input$col_low
+    }
+    #req(isColor(input$col_high)&isColor(input$col_low))
+    g <- g + scale_color_gradient(high = h, low = l)
   }
-  test <- ggplotly(g,tooltip = "text") %>%
+  p <- ggplotly(g,tooltip = "text") %>%
     config(
       toImageButtonOptions = list(
         format = "svg",
@@ -76,5 +82,5 @@ volcano_plot <- function(input, data, pathway_dic){
         height = 1000
       )
     ) %>% event_register('plotly_selected')
-  return(test)
+  return(p)
 }
