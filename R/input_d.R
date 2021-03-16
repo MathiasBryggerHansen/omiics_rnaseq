@@ -9,8 +9,19 @@
 input_d <- function(input){
   files <- list()
   for( d in 1:input$nfiles){
+
     if(input[[paste0("combined",d)]]){#test for combined text file
-      counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
+      h <- readLines(input[[paste0("count",d)]][["datapath"]], n = 1)
+      if(grepl(h, pattern = "featureCounts")){ #if the dataset is raw from featureCounts
+        counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",stringsAsFactors = F)
+        counts_data <- counts_data[,-c(seq(2,6))] #remove Chr	Start	End	Strand	Length
+        print(head(counts_data))
+      }
+      else {
+        print("else")
+        counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
+      }
+
     }
     else{
       d_path <- input[[paste0("count",d)]][["datapath"]]
