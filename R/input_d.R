@@ -16,6 +16,7 @@ input_d <- function(input){
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",stringsAsFactors = F)
         counts_data <- counts_data[,-c(seq(2,6))] #remove Chr	Start	End	Strand	Length
         print(head(counts_data))
+        break
       }
       else {
         print("else")
