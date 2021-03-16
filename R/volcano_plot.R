@@ -31,8 +31,8 @@ volcano_plot <- function(input, data, pathway_dic){
     }
   }
   else {
-    if(length(unique(col_vals)) > 30){ #avoid matching with overwhelming annotation
-      showNotification("the matching term exceeds 30 unique identifiers and does not work as color annotation",type = "message")
+    if(length(unique(col_vals)) > 100){ #avoid matching with overwhelming annotation
+      showNotification("the matching term exceeds 100 unique identifiers and does not work as color annotation",type = "message")
       col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
     }
     col_vals <- factor(col_vals)
