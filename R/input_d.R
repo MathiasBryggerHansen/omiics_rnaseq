@@ -14,15 +14,12 @@ input_d <- function(input){
       h <- readLines(input[[paste0("count",d)]][["datapath"]], n = 1)
       if(grepl(h, pattern = "featureCounts")){ #if the dataset is raw from featureCounts
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",stringsAsFactors = F)
+        colnames(counts_data) <- sapply(colnames(counts_data),strsplit(split = ".", fixed = T)[[1]][1]) #set sample ids
         counts_data <- counts_data[,-c(seq(2,6))] #remove Chr	Start	End	Strand	Length
-        print(head(counts_data))
-        break
       }
       else {
-        print("else")
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
       }
-
     }
     else{
       d_path <- input[[paste0("count",d)]][["datapath"]]
@@ -48,14 +45,14 @@ input_d <- function(input){
       row.names(counts_data) <- make.names(counts_data[,1],unique = T)
       counts_data[,1] <- NULL
     }
-    pheno_keep <- grepl(colnames(counts_data),pattern = paste(pheno_data[[2]],collapse = "|"))
+    pheno_keep <- grepl(colnames(counts_data),pattern = paste(pheno_data[[input$sample_col]],collapse = "|"))
     ids <- row.names(counts_data)
     if(!grepl(ids[1],pattern = "ENS")){
       ids <- probe_library()$ensembl_gene_id[match(x = ids, probe_library()$probe)]
       row.names(counts_data) <- make.names(ids,unique = T)
     }
     counts_data <- counts_data[,c(pheno_keep)]#colnames(counts_data)%in%pheno_data[[2]]] #remove samples not in pheno
-    colnames(counts_data) <- pheno_data[[2]]
+    colnames(counts_data) <- pheno_data[[input$sample_col]]
     counts_data <- counts_data[order(row.names(counts_data)),] #a way to secure compatible order????
     files[[paste0("count",d)]] <- counts_data
     files[[paste0("pheno",d)]] <- pheno_data
