@@ -16,8 +16,7 @@ count2deseq_analysis <- function(input, countdata, pheno){
   row.names(countdata) <- make.names(gsub("\\..+$", "",row.names(countdata)),unique = T)
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
-  phenotypes <- as.factor(pheno[[input$group_col]])
-  print(phenotypes)
+  phenotypes <- pheno[[input$group_col]]
   if(input$batch_correction&ncol(pheno)>1){#values need to be updated if batch correction is chosen
     batch <- pheno[[input$batch_col]]
     samples <- data.frame(row.names=colnames(countdata),
