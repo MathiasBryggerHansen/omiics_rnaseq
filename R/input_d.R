@@ -16,7 +16,7 @@ input_d <- function(input){
       if(grepl(h, pattern = "featureCounts")){ #if the dataset is raw from featureCounts
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",skip = 1,stringsAsFactors = F)
         colnames(counts_data) <- sapply(colnames(counts_data),FUN = function(x) strsplit(x, split = ".", fixed = T)[[1]][1]) #set sample ids
-        row.names(counts_data) <- counts_data[,1]
+        row.names(counts_data) <- make.names(counts_data[,1],unique = T)
         counts_data <- counts_data[,-c(seq(1,6))] #remove Chr	Start	End	Strand	Length
       }
       else {
