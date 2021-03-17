@@ -55,13 +55,9 @@ input_d <- function(input, probe_library){
       ids <- probe_library()$ensembl_gene_id[match(x = ids, probe_library()$probe)]
       row.names(counts_data) <- make.names(ids,unique = T)
     }
-
-
     counts_data <- counts_data[,c(pheno_keep)]#colnames(counts_data)%in%pheno_data[[2]]] #remove samples not in pheno
-    print(input$sample_col)
     colnames(counts_data) <- pheno_data[[input$sample_col]]
     counts_data <- counts_data[order(row.names(counts_data)),] #a way to secure compatible order????
-    print(head(counts_data))
     files[[paste0("count",d)]] <- counts_data
     files[[paste0("pheno",d)]] <- pheno_data
     files[[paste0("circRNA",d)]] <- circ_data

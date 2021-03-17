@@ -30,8 +30,6 @@ count2deseq_analysis <- function(input, countdata, pheno){
     samples <- data.frame(row.names=colnames(countdata),
                           line=line,
                           phenotypes=phenotypes)
-    print(str(samples))
-    print(str(countdata))
     dds <- DESeq2::DESeqDataSetFromMatrix(countData=countdata, samples, design=~phenotypes)
   }
   if(sum(grepl(x = phenotypes,pattern = "control|normal|reference|wt",ignore.case = T))>0){
@@ -43,7 +41,6 @@ count2deseq_analysis <- function(input, countdata, pheno){
   temp <- counts(dds)
   temp <- temp[order(row.names(temp)),]
   comparisons_rev <- c()
-
   #all possible combinations of phenotype interactions
   if(length(unique(phenotypes))>2){
     for(p in unique(phenotypes)){##needs to be tested with raw multivariate data!!
