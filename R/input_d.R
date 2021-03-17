@@ -20,9 +20,10 @@ input_d <- function(input, probe_library){
       }
       else {
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
+        print(head(counts_data))
       }
     }
-    print(counts_data)
+
     else{
       d_path <- input[[paste0("count",d)]][["datapath"]]
       temp_dir <- paste0("./temp",d)
