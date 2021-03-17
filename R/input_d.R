@@ -12,17 +12,17 @@ input_d <- function(input, probe_library){
   for( d in 1:input$nfiles){
     if(input[[paste0("combined",d)]]){#test for combined text file
       h <- readLines(input[[paste0("count",d)]][["datapath"]], n = 1)
+      print(h)
       if(grepl(h, pattern = "featureCounts")){ #if the dataset is raw from featureCounts
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",skip = 1,stringsAsFactors = F)
-        print(head(counts_data))
         colnames(counts_data) <- sapply(colnames(counts_data),FUN = function(x) strsplit(x, split = ".", fixed = T)[[1]][1]) #set sample ids
-        print(head(counts_data))
         counts_data <- counts_data[,-c(seq(2,6))] #remove Chr	Start	End	Strand	Length
       }
       else {
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
       }
     }
+    print(counts_data)
     else{
       d_path <- input[[paste0("count",d)]][["datapath"]]
       temp_dir <- paste0("./temp",d)
@@ -41,6 +41,7 @@ input_d <- function(input, probe_library){
     if( (input$gene_id_col & input[[paste0("combined",d)]]) | grepl(h, pattern = "featureCounts")){
       row.names(counts_data) <- make.names(counts_data[,1],unique = T)
       counts_data[,1] <- NULL
+      print(head(counts_data))
     }
     if(input$gene_filter){
       counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
@@ -55,7 +56,6 @@ input_d <- function(input, probe_library){
     counts_data <- counts_data[,c(pheno_keep)]#colnames(counts_data)%in%pheno_data[[2]]] #remove samples not in pheno
     print(input$sample_col)
     colnames(counts_data) <- pheno_data[[input$sample_col]]
-    print("2")
     counts_data <- counts_data[order(row.names(counts_data)),] #a way to secure compatible order????
     print(head(counts_data))
     files[[paste0("count",d)]] <- counts_data
