@@ -2,21 +2,20 @@
 #' Handles if the files are separate for each sample, the zipped folder is unzipped and the data combined.
 #'
 #' @param input UI data including the amount datasets (nfiles)
+#' @param probe_library
 #' @export input_d
 #'
 #' @return list of "count", "pheno" and "circ" (if circRNA data is included)
 
-input_d <- function(input){
+input_d <- function(input, probe_library){
   files <- list()
   for( d in 1:input$nfiles){
-    print("her")
-
     if(input[[paste0("combined",d)]]){#test for combined text file
       h <- readLines(input[[paste0("count",d)]][["datapath"]], n = 1)
       if(grepl(h, pattern = "featureCounts")){ #if the dataset is raw from featureCounts
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",skip = 1,stringsAsFactors = F)
         colnames(counts_data) <- sapply(colnames(counts_data),FUN = function(x) strsplit(x, split = ".", fixed = T)[[1]][1]) #set sample ids
-        counts_data <- counts_data[,-c(seq(1,6))] #remove Chr	Start	End	Strand	Length
+        counts_data <- counts_data[,-c(seq(2,6))] #remove Chr	Start	End	Strand	Length
       }
       else {
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
