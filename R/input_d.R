@@ -34,7 +34,9 @@ input_d <- function(input){
       dir_name <- list.files(temp_dir)
       counts_data <- read_files(paste0(temp_dir,"/",dir_name),d)
     }
-    if(!is.null(input[[paste0("circRNA",d)]])){#test circ data
+    if(d%in%(input[[paste0("circRNA",d)]])){#test circ data
+      print("hej")
+      break
       circ_data <- read.csv2(input[[paste0("circRNA",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
     }
     else{
