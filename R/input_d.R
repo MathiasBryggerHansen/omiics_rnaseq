@@ -18,6 +18,7 @@ input_d <- function(input){
         print("her3")
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",skip = 1,stringsAsFactors = F)
         colnames(counts_data) <- sapply(colnames(counts_data),FUN = function(x) strsplit(x, split = ".", fixed = T)[[1]][1]) #set sample ids
+        row.names(counts_data) <- counts_data[,1]
         counts_data <- counts_data[,-c(seq(2,6))] #remove Chr	Start	End	Strand	Length
       }
       else {
@@ -33,29 +34,21 @@ input_d <- function(input){
       dir_name <- list.files(temp_dir)
       counts_data <- read_files(paste0(temp_dir,"/",dir_name),d)
     }
-    print("jhb")
-    break
     if(d%in%(input[[paste0("circRNA",d)]])){#test circ data
-      print("hej")
-      break
       circ_data <- read.csv2(input[[paste0("circRNA",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
     }
     else{
       circ_data <- NULL
     }
-
-    if(input$gene_filter){
-      counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
-    }
-    print("4")
-    break
-    pheno_data <- read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T,stringsAsFactors = F)#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
-    print(pheno_data)
-
     if(input$gene_id_col & input[[paste0("combined",d)]]){
       row.names(counts_data) <- make.names(counts_data[,1],unique = T)
       counts_data[,1] <- NULL
     }
+    if(input$gene_filter){
+      counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
+    }
+    pheno_data <- read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T,stringsAsFactors = F)#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
+
     pheno_keep <- grepl(colnames(counts_data),pattern = paste(pheno_data[[input$sample_col]],collapse = "|"))
     ids <- row.names(counts_data)
     if(!grepl(ids[1],pattern = "ENS")){
