@@ -42,8 +42,9 @@ count2deseq_analysis <- function(input, countdata, pheno){
 
   dds <- DESeq2::DESeq(dds)
   temp <- counts(dds)
-  temp <- temp[order(row.names(temp)),]
+  temp <- as.matrix(temp[order(row.names(temp)),])
   comparisons_rev <- c()
+
   #all possible combinations of phenotype interactions
   if(length(unique(phenotypes))>2){
     for(p in unique(phenotypes)){##needs to be tested with raw multivariate data!!
@@ -71,7 +72,7 @@ count2deseq_analysis <- function(input, countdata, pheno){
     all_res <- data.frame(results(dds))
     colnames(all_res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
   }
-
+  print(head(all_res))
   all_res$ensembl_gene_id <- NULL
   res[["test"]] <- all_res
   res[["norm_counts"]] <- varianceStabilizingTransformation(temp)
