@@ -34,7 +34,6 @@ input_d <- function(input){
       counts_data <- read_files(paste0(temp_dir,"/",dir_name),d)
     }
     print("jhb")
-    return(NULL)
     break
     if(d%in%(input[[paste0("circRNA",d)]])){#test circ data
       print("hej")
