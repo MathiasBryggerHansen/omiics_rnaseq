@@ -12,7 +12,6 @@ input_d <- function(input, probe_library){
   for( d in 1:input$nfiles){
     if(input[[paste0("combined",d)]]){#test for combined text file
       h <- readLines(input[[paste0("count",d)]][["datapath"]], n = 1)
-      print(h)
       if(grepl(h, pattern = "featureCounts")){ #if the dataset is raw from featureCounts
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",skip = 1,stringsAsFactors = F)
         colnames(counts_data) <- sapply(colnames(counts_data),FUN = function(x) strsplit(x, split = ".", fixed = T)[[1]][1]) #set sample ids
@@ -20,7 +19,6 @@ input_d <- function(input, probe_library){
       }
       else {
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
-        print(head(counts_data))
       }
     }
 
@@ -42,18 +40,23 @@ input_d <- function(input, probe_library){
     if( (input$gene_id_col & input[[paste0("combined",d)]]) | grepl(h, pattern = "featureCounts")){
       row.names(counts_data) <- make.names(counts_data[,1],unique = T)
       counts_data[,1] <- NULL
-      print(head(counts_data))
     }
     if(input$gene_filter){
       counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
     }
     pheno_data <- read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T,stringsAsFactors = F)#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
     pheno_keep <- grepl(colnames(counts_data),pattern = paste(pheno_data[[input$sample_col]],collapse = "|"))
+    if(sum(pheno_keep)==0){
+      showNotification("Are you sure you chose the correct column numbers? No rows match.")
+    }
+    req(sum(pheno_keep)!=0)
     ids <- row.names(counts_data)
     if(!grepl(ids[1],pattern = "ENS")){
       ids <- probe_library()$ensembl_gene_id[match(x = ids, probe_library()$probe)]
       row.names(counts_data) <- make.names(ids,unique = T)
     }
+
+
     counts_data <- counts_data[,c(pheno_keep)]#colnames(counts_data)%in%pheno_data[[2]]] #remove samples not in pheno
     print(input$sample_col)
     colnames(counts_data) <- pheno_data[[input$sample_col]]
