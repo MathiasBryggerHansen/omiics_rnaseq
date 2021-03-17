@@ -47,9 +47,10 @@ input_d <- function(input){
       counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
     }
     print("4")
+    break
     pheno_data <- read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T,stringsAsFactors = F)#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
     print(pheno_data)
-    break
+
     if(input$gene_id_col & input[[paste0("combined",d)]]){
       row.names(counts_data) <- make.names(counts_data[,1],unique = T)
       counts_data[,1] <- NULL
