@@ -75,7 +75,8 @@ count2deseq_analysis <- function(input, countdata, pheno){
   print(head(all_res))
   all_res$ensembl_gene_id <- NULL
   res[["test"]] <- all_res
-  res[["norm_counts"]] <- counts(varianceStabilizingTransformation(dds))
+  res[["norm_counts"]] <- assay(varianceStabilizingTransformation(dds))
+  print(head(varianceStabilizingTransformation(dds)))
   res[["dds"]] <- dds
   res[["phenotypes"]] <- phenotypes
   return(res)
