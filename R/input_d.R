@@ -21,6 +21,7 @@ input_d <- function(input){
         print(head(counts_data))
         counts_data <- counts_data[,-c(seq(2,6))] #remove Chr	Start	End	Strand	Length
         print(head(counts_data))
+        break
       }
       else {
         counts_data <- read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
@@ -35,6 +36,8 @@ input_d <- function(input){
       dir_name <- list.files(temp_dir)
       counts_data <- read_files(paste0(temp_dir,"/",dir_name),d)
     }
+    print("jhb")
+    break
     if(d%in%(input[[paste0("circRNA",d)]])){#test circ data
       print("hej")
       break
