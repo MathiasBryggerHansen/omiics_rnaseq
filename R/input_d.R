@@ -56,7 +56,7 @@ input_d <- function(input, probe_library){
     colnames(counts_data) <- pheno_data[[input$sample_col]]
     print("2")
     counts_data <- counts_data[order(row.names(counts_data)),] #a way to secure compatible order????
-    print("3")
+    print(head(counts_data))
     files[[paste0("count",d)]] <- counts_data
     files[[paste0("pheno",d)]] <- pheno_data
     files[[paste0("circRNA",d)]] <- circ_data
