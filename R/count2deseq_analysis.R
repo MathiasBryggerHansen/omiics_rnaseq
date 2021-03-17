@@ -11,6 +11,7 @@
 #' @export count2deseq_analysis
 
 count2deseq_analysis <- function(input, countdata, pheno){
+  countdata <- as.matrix(countdata)
   res <- list()
   row.names(countdata) <- make.names(gsub("\\..+$", "",row.names(countdata)),unique = T)
   line = gsub("_.$", "",colnames(countdata))
@@ -29,12 +30,15 @@ count2deseq_analysis <- function(input, countdata, pheno){
     samples <- data.frame(row.names=colnames(countdata),
                           line=line,
                           phenotypes=phenotypes)
+    print(str(samples))
+    print(str(countdata))
     dds <- DESeq2::DESeqDataSetFromMatrix(countData=countdata, samples, design=~phenotypes)
   }
   if(sum(grepl(x = phenotypes,pattern = "control|normal|reference|wt",ignore.case = T))>0){
     control <- unique(phenotypes)[grepl(x = unique(phenotypes),pattern = "control|normal|reference|wt",ignore.case = T)]
     dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
   }
+
   dds <- DESeq2::DESeq(dds)
   temp <- counts(dds)
   temp <- temp[order(row.names(temp)),]
