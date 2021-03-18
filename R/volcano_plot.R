@@ -6,7 +6,6 @@
 #' @import ggplot2 plotly
 
 volcano_plot <- function(input, data, pathway_dic){
-
   data$circToLin <- NULL
   data$sum_lin <- NULL
   data$sum_junction <- NULL
@@ -50,7 +49,12 @@ volcano_plot <- function(input, data, pathway_dic){
       axis.title = element_text(size = rel(1.25))) +
     labs(color = legend_name) +
     if(input$experiment_id!=""){
+      if(sum(grepl(colnames(data),pattern = experiment_id)!=2)){
+        showNotification("Your searchterm does not match a dataset ID", type = "message")
+      }
+      req(sum(grepl(colnames(data),pattern = experiment_id)==2))
       temp <- colnames(data)[grep(colnames(data),pattern = experiment_id)]
+
       new_padj <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "padj")]]
       new_fc <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "log2")]]
       temp2 <- paste0("`),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
