@@ -16,6 +16,7 @@ count2deseq_analysis <- function(input, countdata, pheno){
   row.names(countdata) <- make.names(gsub("\\..+$", "",row.names(countdata)),unique = T)
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
+  print(head(pheno))
   phenotypes <- pheno[[input$group_col1]]
   print(input$control1)
   print(phenotypes)
