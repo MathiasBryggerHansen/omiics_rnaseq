@@ -56,9 +56,9 @@ count2deseq_analysis <- function(input, countdata, pheno){
         de_res$ensembl_gene_id <- row.names(de_res)
       }
       else{
-        res <- test[,c("baseMean","log2FoldChange","padj")]
+        de_res <- test[,c("baseMean","log2FoldChange","padj")]
         colnames(de_res) <- c("baseMean",paste0("log2FoldChange_",case),paste0("padj_",case))
-        res$ensembl_gene_id <- row.names(de_res)
+        de_res$ensembl_gene_id <- row.names(de_res)
       }
     }
     else {
@@ -68,6 +68,8 @@ count2deseq_analysis <- function(input, countdata, pheno){
       de_res <- merge(de_res, test, by = "ensembl_gene_id")
     }
   }
+  #row.names(de_res) <- de_res$ensembl_gene_id
+  print(head(de_res))
   de_res$ensembl_gene_id <- NULL
   res[["test"]] <- de_res
   res[["norm_counts"]] <- assay(varianceStabilizingTransformation(dds))
