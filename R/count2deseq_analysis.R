@@ -18,7 +18,12 @@ count2deseq_analysis <- function(input, countdata, pheno){
   line = factor(line)
   phenotypes <- pheno[[input$group_col1]]
   print(input$control1)
+  print(phenotypes)
   control <- input[[paste0("control",1)]] #this needs to be adjusted if there are multiple files?
+  if(!control%in%phenotypes){
+    showNotification(paste0("Your control group must match one group ID (",phenotypes,")"),type = "message")
+  }
+  req(control%in%phenotypes)
   #case <- input$case
   if(input$batch_correction&ncol(pheno)>1){#values need to be updated if batch correction is chosen
     batch <- pheno[[input$batch_col1]]
