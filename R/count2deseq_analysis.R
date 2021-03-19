@@ -18,7 +18,6 @@ count2deseq_analysis <- function(input, countdata, pheno){
   line = factor(line)
   control <- input[[paste0("control",1)]] #this needs to be adjusted if there are multiple files?
   phenotypes <- factor(pheno[[input$group_col1]])
-  print(phenotypes)
   if(!control%in%phenotypes){
     showNotification(paste0("Your control group must match one group ID (",paste(phenotypes, collapse = ", "),")"),type = "message")
   }
@@ -39,6 +38,10 @@ count2deseq_analysis <- function(input, countdata, pheno){
                           phenotypes=phenotypes)
     dds <- DESeq2::DESeqDataSetFromMatrix(countData=countdata, samples, design=~phenotypes)
   }
+  print(phenotypes)
+  print(str(dds))
+  print(samples)
+  print(control)
   # if(sum(grepl(x = phenotypes,pattern = "control|normal|reference|wt",ignore.case = T))>0){
   #   control <- unique(phenotypes)[grepl(x = unique(phenotypes),pattern = "control|normal|reference|wt",ignore.case = T)]
   #   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
@@ -55,6 +58,7 @@ count2deseq_analysis <- function(input, countdata, pheno){
         colnames(results) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
         results <- results[,c("baseMean","log2FoldChange","padj")]
         results$ensembl_gene_id <- row.names(results)
+        print(head(results))
       }
       else{
         results <- test[,c("baseMean","log2FoldChange","padj")]
@@ -66,10 +70,11 @@ count2deseq_analysis <- function(input, countdata, pheno){
       colnames(test) <- c("baseMean",paste0("log2FoldChange_",case),"lfcSE","stat","pvalue",paste0("padj_",case))
       test <- test[,c(paste0("log2FoldChange_",case),paste0("padj_",case))]
       test$ensembl_gene_id <- row.names(test)
+      print(head(test))
       results <- merge(results, test, by = "ensembl_gene_id")
     }
   }
-
+  print(head(results))
   all_res$ensembl_gene_id <- NULL
   res[["test"]] <- results
   res[["norm_counts"]] <- assay(varianceStabilizingTransformation(dds))
