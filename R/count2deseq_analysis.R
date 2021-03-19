@@ -17,6 +17,8 @@ count2deseq_analysis <- function(input, countdata, pheno){
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
   control <- input[[paste0("control",1)]] #this needs to be adjusted if there are multiple files?
+  phenotypes <- pheno[[input$group_col1]]
+  print(phenotypes)
   if(!control%in%phenotypes){
     showNotification(paste0("Your control group must match one group ID (",paste(phenotypes, collapse = ", "),")"),type = "message")
   }
