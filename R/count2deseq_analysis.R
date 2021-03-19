@@ -51,31 +51,28 @@ count2deseq_analysis <- function(input, countdata, pheno){
   cases <- factor(cases[cases!=control])
   for(case in unique(cases)){
     test <- DESeq2::results(dds,contrast = c("phenotypes",case,control))
-    if(!exists("res")){
+    if(!exists("de_res")){
       if(length(case) == 1){
-        res <- test
-        colnames(res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
-        res <- res[,c("baseMean","log2FoldChange","padj")]
-        res$ensembl_gene_id <- row.names(res)
+        de_res <- test
+        colnames(de_res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
+        de_res <- de_res[,c("baseMean","log2FoldChange","padj")]
+        de_res$ensembl_gene_id <- row.names(de_res)
       }
       else{
         res <- test[,c("baseMean","log2FoldChange","padj")]
-        colnames(res) <- c("baseMean",paste0("log2FoldChange_",case),paste0("padj_",case))
-        res$ensembl_gene_id <- row.names(res)
+        colnames(de_res) <- c("baseMean",paste0("log2FoldChange_",case),paste0("padj_",case))
+        res$ensembl_gene_id <- row.names(de_res)
       }
     }
     else {
       colnames(test) <- c("baseMean",paste0("log2FoldChange_",case),"lfcSE","stat","pvalue",paste0("padj_",case))
       test <- test[,c(paste0("log2FoldChange_",case),paste0("padj_",case))]
       test$ensembl_gene_id <- row.names(test)
-      print(head(test))
-      print(head(res))
-      results <- merge(res, test, by = "ensembl_gene_id")
+      de_res <- merge(de_res, test, by = "ensembl_gene_id")
     }
   }
-  print(head(results))
-  all_res$ensembl_gene_id <- NULL
-  res[["test"]] <- results
+  de_res$ensembl_gene_id <- NULL
+  res[["test"]] <- de_res
   res[["norm_counts"]] <- assay(varianceStabilizingTransformation(dds))
   res[["dds"]] <- dds
   res[["phenotypes"]] <- phenotypes
