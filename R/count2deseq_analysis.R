@@ -15,6 +15,7 @@ count2deseq_analysis <- function(input, countdata, pheno){
   row.names(countdata) <- make.names(gsub("\\..+$", "",row.names(countdata)),unique = T)
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
+  res <- list()
   control <- input[[paste0("control",1)]] #this needs to be adjusted if there are multiple files?
   phenotypes <- factor(pheno[[input$group_col1]])
   if(!control%in%phenotypes){
@@ -37,10 +38,6 @@ count2deseq_analysis <- function(input, countdata, pheno){
                           phenotypes=phenotypes)
     dds <- DESeq2::DESeqDataSetFromMatrix(countData=countdata, samples, design=~phenotypes)
   }
-  print(phenotypes)
-  print(str(dds))
-  print(samples)
-  print(control)
   # if(sum(grepl(x = phenotypes,pattern = "control|normal|reference|wt",ignore.case = T))>0){
   #   control <- unique(phenotypes)[grepl(x = unique(phenotypes),pattern = "control|normal|reference|wt",ignore.case = T)]
   #   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
