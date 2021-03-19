@@ -39,26 +39,37 @@ count2deseq_analysis <- function(input, countdata, pheno){
   #   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
   # }
   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
-
   dds <- DESeq2::DESeq(dds)
-  test <- DESeq2::results(dds,contrast = c("phenotypes",case,control))
+  cases <- unique(phenotypes)
+  cases <- cases[cases!=control]
+  for(case in unique(cases)){
+    test <- DESeq2::results(dds,contrast = c("phenotypes",case,control))
+    if(!exists("results")){
+      if(length(case) == 1){
+        results <- test
+        colnames(results) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
+        results <- results[,c("baseMean","log2FoldChange","padj")]
+        results$ensembl_gene_id <- row.names(results)
+      }
+      else{
+        results <- test[,c("baseMean","log2FoldChange","padj")]
+        colnames(results) <- c("baseMean",paste0("log2FoldChange_",case),paste0("padj_",case))
+        results$ensembl_gene_id <- row.names(results)
+      }
+    }
+    else {
+      colnames(test) <- c("baseMean",paste0("log2FoldChange_",case),"lfcSE","stat","pvalue",paste0("padj_",case))
+      test <- test[,c(paste0("log2FoldChange_",case),paste0("padj_",case))]
+      test$ensembl_gene_id <- row.names(test)
+      results <- merge(results, test, by = "ensembl_gene_id")
+    }
+  }
+
   all_res$ensembl_gene_id <- NULL
-  res[["test"]] <- test
+  res[["test"]] <- results
   res[["norm_counts"]] <- assay(varianceStabilizingTransformation(dds))
-  print(head(varianceStabilizingTransformation(dds)))
   res[["dds"]] <- dds
   res[["phenotypes"]] <- phenotypes
-  # temp <- counts(dds)
-  # temp <- temp[order(row.names(temp)),]
-  #comparisons_rev <- c()
-  # cases <- unique(phenotypes)
-  # cases <- cases[cases!=control]
-  # cases <- unique(phenotypes)
-  # cases <- cases[cases!=control]
-
-  #for(c in unique(cases)){
-
-  #}
   #all possible combinations of phenotype interactions
   # if(length(unique(phenotypes))>2){
   #   for(p in unique(phenotypes)){##needs to be tested with raw multivariate data!!
