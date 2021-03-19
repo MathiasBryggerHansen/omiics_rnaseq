@@ -12,7 +12,6 @@
 
 count2deseq_analysis <- function(input, countdata, pheno){
   #countdata <- as.matrix(countdata)
-  res <- list()
   row.names(countdata) <- make.names(gsub("\\..+$", "",row.names(countdata)),unique = T)
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
