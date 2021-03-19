@@ -60,6 +60,7 @@ input_d <- function(input, probe_library){
     counts_data <- counts_data[order(row.names(counts_data)),] #a way to secure compatible order????
     files[[paste0("count",d)]] <- counts_data
     files[[paste0("pheno",d)]] <- pheno_data
+    print(pheno_data)
     files[[paste0("circRNA",d)]] <- circ_data
   }
   return(files)

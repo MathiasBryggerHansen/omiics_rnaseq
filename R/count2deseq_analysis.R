@@ -16,10 +16,6 @@ count2deseq_analysis <- function(input, countdata, pheno){
   row.names(countdata) <- make.names(gsub("\\..+$", "",row.names(countdata)),unique = T)
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
-  print(head(pheno))
-  phenotypes <- pheno[[input$group_col1]]
-  print(input$control1)
-  print(phenotypes)
   control <- input[[paste0("control",1)]] #this needs to be adjusted if there are multiple files?
   if(!control%in%phenotypes){
     showNotification(paste0("Your control group must match one group ID (",paste(phenotypes, collapse = ", "),")"),type = "message")
@@ -48,7 +44,7 @@ count2deseq_analysis <- function(input, countdata, pheno){
   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
   dds <- DESeq2::DESeq(dds)
   cases <- unique(phenotypes)
-  cases <- cases[cases!=control]
+  cases <- factor(cases[cases!=control])
   for(case in unique(cases)){
     test <- DESeq2::results(dds,contrast = c("phenotypes",case,control))
     if(!exists("results")){
