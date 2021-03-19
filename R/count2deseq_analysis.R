@@ -52,18 +52,17 @@ count2deseq_analysis <- function(input, countdata, pheno){
   cases <- factor(cases[cases!=control])
   for(case in unique(cases)){
     test <- DESeq2::results(dds,contrast = c("phenotypes",case,control))
-    if(!exists("results")){
+    if(!exists("res")){
       if(length(case) == 1){
-        results <- test
-        colnames(results) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
-        results <- results[,c("baseMean","log2FoldChange","padj")]
-        results$ensembl_gene_id <- row.names(results)
-        print(head(results))
+        res <- test
+        colnames(res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
+        res <- res[,c("baseMean","log2FoldChange","padj")]
+        res$ensembl_gene_id <- row.names(res)
       }
       else{
-        results <- test[,c("baseMean","log2FoldChange","padj")]
-        colnames(results) <- c("baseMean",paste0("log2FoldChange_",case),paste0("padj_",case))
-        results$ensembl_gene_id <- row.names(results)
+        res <- test[,c("baseMean","log2FoldChange","padj")]
+        colnames(res) <- c("baseMean",paste0("log2FoldChange_",case),paste0("padj_",case))
+        res$ensembl_gene_id <- row.names(res)
       }
     }
     else {
@@ -71,7 +70,8 @@ count2deseq_analysis <- function(input, countdata, pheno){
       test <- test[,c(paste0("log2FoldChange_",case),paste0("padj_",case))]
       test$ensembl_gene_id <- row.names(test)
       print(head(test))
-      results <- merge(results, test, by = "ensembl_gene_id")
+      print(head(res))
+      results <- merge(res, test, by = "ensembl_gene_id")
     }
   }
   print(head(results))
