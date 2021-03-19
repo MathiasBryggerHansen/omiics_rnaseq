@@ -17,6 +17,8 @@ count2deseq_analysis <- function(input, countdata, pheno){
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
   phenotypes <- pheno[[input$group_col]]
+  control <- input$control
+  case <- input$case
   if(input$batch_correction&ncol(pheno)>1){#values need to be updated if batch correction is chosen
     batch <- pheno[[input$batch_col]]
     samples <- data.frame(row.names=colnames(countdata),
@@ -32,48 +34,57 @@ count2deseq_analysis <- function(input, countdata, pheno){
                           phenotypes=phenotypes)
     dds <- DESeq2::DESeqDataSetFromMatrix(countData=countdata, samples, design=~phenotypes)
   }
-  if(sum(grepl(x = phenotypes,pattern = "control|normal|reference|wt",ignore.case = T))>0){
-    control <- unique(phenotypes)[grepl(x = unique(phenotypes),pattern = "control|normal|reference|wt",ignore.case = T)]
-    dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
-  }
+  # if(sum(grepl(x = phenotypes,pattern = "control|normal|reference|wt",ignore.case = T))>0){
+  #   control <- unique(phenotypes)[grepl(x = unique(phenotypes),pattern = "control|normal|reference|wt",ignore.case = T)]
+  #   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
+  # }
+  dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
 
   dds <- DESeq2::DESeq(dds)
-  temp <- counts(dds)
-  temp <- temp[order(row.names(temp)),]
-  comparisons_rev <- c()
-  #all possible combinations of phenotype interactions
-  if(length(unique(phenotypes))>2){
-    for(p in unique(phenotypes)){##needs to be tested with raw multivariate data!!
-      for(p2 in unique(phenotypes)){
-        if(p!=p2&!paste0(p,p2)%in%comparisons_rev){
-          comparisons_rev <- c(comparisons_rev,paste0(p2,p))
-          comparisons <- paste0(p,p2)
-          if(!exists("all_res")){
-            all_res <- data.frame(results(dds,contrast = c("phenotypes",p,p2)))
-            colnames(all_res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
-            all_res$ensembl_gene_id <- row.names(all_res)
-          }
-          else{
-            temp <- data.frame(results(dds,contrast = c("phenotypes",p,p2)))
-            colnames(temp) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
-            colnames(temp) <- paste(colnames(temp),comparisons,sep = "_")
-            temp$ensembl_gene_id <- row.names(temp)
-            merge(all_res,temp,by = "ensembl_gene_id")
-          }
-        }
-      }
-    }
-  }
-  else{
-    all_res <- data.frame(results(dds))
-    colnames(all_res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
-  }
-  print(head(all_res))
+  test <- DESeq2::results(dds,contrast = c("phenotypes",case,control))
   all_res$ensembl_gene_id <- NULL
-  res[["test"]] <- all_res
+  res[["test"]] <- test
   res[["norm_counts"]] <- assay(varianceStabilizingTransformation(dds))
   print(head(varianceStabilizingTransformation(dds)))
   res[["dds"]] <- dds
   res[["phenotypes"]] <- phenotypes
+  # temp <- counts(dds)
+  # temp <- temp[order(row.names(temp)),]
+  #comparisons_rev <- c()
+  # cases <- unique(phenotypes)
+  # cases <- cases[cases!=control]
+  # cases <- unique(phenotypes)
+  # cases <- cases[cases!=control]
+
+  #for(c in unique(cases)){
+
+  #}
+  #all possible combinations of phenotype interactions
+  # if(length(unique(phenotypes))>2){
+  #   for(p in unique(phenotypes)){##needs to be tested with raw multivariate data!!
+  #     for(p2 in unique(phenotypes)){
+  #       if(p!=p2&!paste0(p,p2)%in%comparisons_rev){
+  #         comparisons_rev <- c(comparisons_rev,paste0(p2,p))
+  #         comparisons <- paste0(p,p2)
+  #         if(!exists("all_res")){
+  #           all_res <- data.frame(results(dds,contrast = c("phenotypes",p,p2)))
+  #           colnames(all_res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
+  #           all_res$ensembl_gene_id <- row.names(all_res)
+  #         }
+  #         else{
+  #           temp <- data.frame(results(dds,contrast = c("phenotypes",p,p2)))
+  #           colnames(temp) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
+  #           colnames(temp) <- paste(colnames(temp),comparisons,sep = "_")
+  #           temp$ensembl_gene_id <- row.names(temp)
+  #           merge(all_res,temp,by = "ensembl_gene_id")
+  #         }
+  #       }
+  #     }
+  #   }
+  # }
+  # else{
+  #   all_res <- data.frame(results(dds))
+  #   colnames(all_res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
+  # }
   return(res)
 }
