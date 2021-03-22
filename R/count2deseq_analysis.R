@@ -17,12 +17,15 @@ count2deseq_analysis <- function(input, countdata, pheno){
   line = factor(line)
   res <- list()
   control <- input[[paste0("control",1)]] #this needs to be adjusted if there are multiple files?
+  case <- input[[paste0("case",1)]]
   phenotypes <- factor(pheno[[input$group_col1]])
   if(!control%in%phenotypes){
     showNotification(paste0("Your control group must match one group ID (",paste(phenotypes, collapse = ", "),")"),type = "message")
   }
-  req(control%in%phenotypes)
-  #case <- input$case
+  if(!case%in%phenotypes){
+    showNotification(paste0("Your case group must match one group ID (",paste(phenotypes, collapse = ", "),")"),type = "message")
+  }
+  req(control%in%phenotypes, case%in%phenotypes)
   if(input$batch_correction&ncol(pheno)>1){#values need to be updated if batch correction is chosen
     batch <- pheno[[input$batch_col1]]
     samples <- data.frame(row.names=colnames(countdata),
@@ -44,12 +47,12 @@ count2deseq_analysis <- function(input, countdata, pheno){
   # }
   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
   dds <- DESeq2::DESeq(dds)
-  cases <- unique(phenotypes)
-  cases <- factor(cases[cases!=control])
-  for(case in unique(cases)){
-    test <- DESeq2::results(dds,contrast = c("phenotypes",case,control))
+  p <- unique(phenotypes)
+  p <- factor(p[p!=control])
+  for(i in unique(p)){
+    test <- DESeq2::results(dds,contrast = c("phenotypes",i,control))
     if(!exists("de_res")){
-      if(length(case) == 1){
+      if(length(unique(p)) == 1){
         de_res <- test
         colnames(de_res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
         de_res <- de_res[,c("baseMean","log2FoldChange","padj")]
@@ -57,18 +60,18 @@ count2deseq_analysis <- function(input, countdata, pheno){
       }
       else{
         de_res <- test[,c("baseMean","log2FoldChange","padj")]
-        colnames(de_res) <- c("baseMean",paste0("log2FoldChange_",case),paste0("padj_",case))
+        colnames(de_res) <- c("baseMean",paste0("log2FoldChange_",p),paste0("padj_",p))
         de_res$ensembl_gene_id <- row.names(de_res)
       }
     }
     else {
-      colnames(test) <- c("baseMean",paste0("log2FoldChange_",case),"lfcSE","stat","pvalue",paste0("padj_",case))
-      test <- test[,c(paste0("log2FoldChange_",case),paste0("padj_",case))]
+      colnames(test) <- c("baseMean",paste0("log2FoldChange_",p),"lfcSE","stat","pvalue",paste0("padj_",p))
+      test <- test[,c(paste0("log2FoldChange_",p),paste0("padj_",p))]
       test$ensembl_gene_id <- row.names(test)
       de_res <- merge(de_res, test, by = "ensembl_gene_id")
     }
   }
-  #row.names(de_res) <- de_res$ensembl_gene_id
+  row.names(de_res) <- de_res$ensembl_gene_id #why is this needed?
   print(head(de_res))
   de_res$ensembl_gene_id <- NULL
   res[["test"]] <- de_res
