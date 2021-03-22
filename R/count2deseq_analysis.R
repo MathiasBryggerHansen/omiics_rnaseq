@@ -60,13 +60,13 @@ count2deseq_analysis <- function(input, countdata, pheno){
       }
       else{
         de_res <- test[,c("baseMean","log2FoldChange","padj")]
-        colnames(de_res) <- c("baseMean",paste0("log2FoldChange_",p),paste0("padj_",p))
+        colnames(de_res) <- c("baseMean",paste0("log2FoldChange_",i),paste0("padj_",i))
         de_res$ensembl_gene_id <- row.names(de_res)
       }
     }
     else {
-      colnames(test) <- c("baseMean",paste0("log2FoldChange_",p),"lfcSE","stat","pvalue",paste0("padj_",p))
-      test <- test[,c(paste0("log2FoldChange_",p),paste0("padj_",p))]
+      colnames(test) <- c("baseMean",paste0("log2FoldChange_",i),"lfcSE","stat","pvalue",paste0("padj_",i))
+      test <- test[,c(paste0("log2FoldChange_",i),paste0("padj_",i))]
       test$ensembl_gene_id <- row.names(test)
       de_res <- merge(de_res, test, by = "ensembl_gene_id")
     }
