@@ -10,7 +10,7 @@
 #'
 #' @export count2deseq_analysis
 
-count2deseq_analysis <- function(input, countdata, pheno){
+count2deseq_analysis <- function(input, countdata, pheno,i){
   #countdata <- as.matrix(countdata)
   row.names(countdata) <- make.names(gsub("\\..+$", "",row.names(countdata)),unique = T)
   line = gsub("_.$", "",colnames(countdata))
