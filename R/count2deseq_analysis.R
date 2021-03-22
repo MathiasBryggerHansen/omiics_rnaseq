@@ -46,48 +46,13 @@ count2deseq_analysis <- function(input, countdata, pheno){
   #   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
   # }
   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
-  dds <- DESeq2::DESeq(dds)
-  p <- unique(phenotypes)
-  p <- factor(p[p!=control])
-  for(i in unique(p)){
-    test <- DESeq2::results(dds,contrast = c("phenotypes",i,control))
-    if(!exists("de_res")){
-      if(length(unique(p)) == 1){
-        de_res <- test
-        colnames(de_res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
-        de_res <- de_res[,c("baseMean","log2FoldChange","padj")]
-        de_res$ensembl_gene_id <- row.names(de_res)
-      }
-      if (i == case){
-        de_res <- test[,c("baseMean","log2FoldChange","padj")]
-        colnames(de_res) <- c("baseMean",paste0("log2FoldChange"),paste0("padj"))
-        de_res$ensembl_gene_id <- row.names(de_res)
-      }
-      else{
-        de_res <- test[,c("baseMean","log2FoldChange","padj")]
-        colnames(de_res) <- c("baseMean",paste0("log2FoldChange_",i),paste0("padj_",i))
-        de_res$ensembl_gene_id <- row.names(de_res)
-      }
-    }
-    else {
-      if (i == case){
-        de_res <- test[,c("baseMean","log2FoldChange","padj")]
-        colnames(de_res) <- c("baseMean",paste0("log2FoldChange"),paste0("padj"))
-        de_res$ensembl_gene_id <- row.names(de_res)
-      }
-      else {
-        colnames(test) <- c("baseMean",paste0("log2FoldChange_",i),"lfcSE","stat","pvalue",paste0("padj_",i))
-        test <- test[,c(paste0("log2FoldChange_",i),paste0("padj_",i))]
-        test$ensembl_gene_id <- row.names(test)
-        de_res <- merge(de_res, test, by = "ensembl_gene_id")
-      }
-    }
-  }
+  dds <- DESeq2::DESeq(dds) ##HER
+
   row.names(de_res) <- de_res$ensembl_gene_id #why is this needed?
   de_res$ensembl_gene_id <- NULL
-  res[["test"]] <- de_res
+  res[["test"]] <- dds#de_res
   res[["norm_counts"]] <- assay(varianceStabilizingTransformation(dds))
-  res[["dds"]] <- dds
+  #res[["dds"]] <- dds
   res[["phenotypes"]] <- phenotypes
   #all possible combinations of phenotype interactions
   # if(length(unique(phenotypes))>2){
