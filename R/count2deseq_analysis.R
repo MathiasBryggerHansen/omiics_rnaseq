@@ -58,6 +58,11 @@ count2deseq_analysis <- function(input, countdata, pheno){
         de_res <- de_res[,c("baseMean","log2FoldChange","padj")]
         de_res$ensembl_gene_id <- row.names(de_res)
       }
+      if (i == case){
+        de_res <- test[,c("baseMean","log2FoldChange","padj")]
+        colnames(de_res) <- c("baseMean",paste0("log2FoldChange"),paste0("padj"))
+        de_res$ensembl_gene_id <- row.names(de_res)
+      }
       else{
         de_res <- test[,c("baseMean","log2FoldChange","padj")]
         colnames(de_res) <- c("baseMean",paste0("log2FoldChange_",i),paste0("padj_",i))
@@ -65,10 +70,17 @@ count2deseq_analysis <- function(input, countdata, pheno){
       }
     }
     else {
-      colnames(test) <- c("baseMean",paste0("log2FoldChange_",i),"lfcSE","stat","pvalue",paste0("padj_",i))
-      test <- test[,c(paste0("log2FoldChange_",i),paste0("padj_",i))]
-      test$ensembl_gene_id <- row.names(test)
-      de_res <- merge(de_res, test, by = "ensembl_gene_id")
+      if (i == case){
+        de_res <- test[,c("baseMean","log2FoldChange","padj")]
+        colnames(de_res) <- c("baseMean",paste0("log2FoldChange"),paste0("padj"))
+        de_res$ensembl_gene_id <- row.names(de_res)
+      }
+      else {
+        colnames(test) <- c("baseMean",paste0("log2FoldChange_",i),"lfcSE","stat","pvalue",paste0("padj_",i))
+        test <- test[,c(paste0("log2FoldChange_",i),paste0("padj_",i))]
+        test$ensembl_gene_id <- row.names(test)
+        de_res <- merge(de_res, test, by = "ensembl_gene_id")
+      }
     }
   }
   row.names(de_res) <- de_res$ensembl_gene_id #why is this needed?
