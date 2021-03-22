@@ -84,7 +84,6 @@ count2deseq_analysis <- function(input, countdata, pheno){
     }
   }
   row.names(de_res) <- de_res$ensembl_gene_id #why is this needed?
-  print(head(de_res))
   de_res$ensembl_gene_id <- NULL
   res[["test"]] <- de_res
   res[["norm_counts"]] <- assay(varianceStabilizingTransformation(dds))

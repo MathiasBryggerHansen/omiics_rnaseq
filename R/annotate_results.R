@@ -53,5 +53,7 @@ annotate_results <- function(input, data,ensembl2id,pathway_dic,circ = F){
   data$wiki_link <- refs
   data$wikigene_id <- NULL
   data <- data[order(data$padj),]
+  print("annotated")
+  print(head(data))
   return(data)
 }
