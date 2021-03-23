@@ -42,7 +42,8 @@ count2deseq_analysis <- function(input, countdata, pheno,i){
   dds <- DESeq2::DESeq(dds)
   print(phenotypes)
   print(control)
-  cases <- as.vector(phenotypes[!phenotypes%in%control])
+  cases <- as.vector(unlist(phenotypes[!phenotypes%in%control]))
+  print(cases)
   for(i in unique(cases)){
     test <- DESeq2::results(dds,contrast = c("phenotypes",i,control))
     if(!exists("de_res")){
