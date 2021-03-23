@@ -47,7 +47,7 @@ count2deseq_analysis <- function(input, countdata, pheno,i){
   for(i in unique(cases)){
     test <- DESeq2::results(dds,contrast = c("phenotypes",i,control))
     if(!exists("de_res")){
-      if(length(unique(p)) == 1){
+      if(length(unique(cases)) == 1){
         de_res <- test
         colnames(de_res) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
         de_res <- de_res[,c("baseMean","log2FoldChange","padj")]
