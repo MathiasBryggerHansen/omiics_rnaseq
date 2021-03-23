@@ -9,7 +9,6 @@ volcano_plot <- function(input, data, pathway_dic){
   data$circToLin <- NULL
   data$sum_lin <- NULL
   data$sum_junction <- NULL
-  cat(colnames(data))
   col_nr <- grep(colnames(data),pattern = gsub(input$volcano_col,pattern = "-",replacement = "_"))[1]
   col_vals <- c(data[,col_nr])
   #req(length(unique(col_vals)) < 100)
@@ -30,9 +29,11 @@ volcano_plot <- function(input, data, pathway_dic){
     }
   }
   else {
-    if(length(unique(col_vals)) > 100){ #avoid matching with overwhelming annotation
-      showNotification("the matching term exceeds 100 unique identifiers and does not work as color annotation",type = "message")
-      col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
+    if(length(unique(col_vals)) > 4){ #avoid matching with overwhelming annotation
+      showNotification("the matching term exceeds 4 unique identifiers, only the 4 indentifiers with highest frequency is shown",type = "message")
+      keep_vals <- order(table(col_vals),decreasing = T)[1:4]
+      col_nr <- ifelse(col_vals%in%keep_vals, col_vals, "Other")
+      #col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
     }
     col_vals <- factor(col_vals)
     legend_name <- colnames(data)[col_nr]
