@@ -11,6 +11,7 @@ volcano_plot <- function(input, data, pathway_dic){
   data$sum_junction <- NULL
   col_nr <- grep(colnames(data),pattern = gsub(input$volcano_col,pattern = "-",replacement = "_"))[1]
   col_vals <- c(data[,col_nr])
+  col_text <- c(data[,col_nr])
   #req(length(unique(col_vals)) < 100)
   if(sum(sapply(col_vals,is.numeric))>10){
     if(input$log_scale){
@@ -33,7 +34,9 @@ volcano_plot <- function(input, data, pathway_dic){
       showNotification("the matching term exceeds 4 unique identifiers, only the 4 indentifiers with highest frequency is shown",type = "message")
       keep_vals <- names(table(col_vals)[order(table(col_vals),decreasing = T)][1:4])
       print(keep_vals)
+      col_text <- col_vals
       col_vals <- ifelse(col_vals%in%keep_vals, col_vals, "Other")
+
       #col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
     }
     col_vals <- factor(col_vals)
@@ -59,11 +62,11 @@ volcano_plot <- function(input, data, pathway_dic){
 
       new_padj <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "padj")]]
       new_fc <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "log2")]]
-      temp2 <- paste0("`),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
+      temp2 <- paste0("`),color = col_vals, text=paste(gene_symbol, col_text), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
       eval(parse(text = paste0("geom_point(data=data,aes(x=`",new_fc,"`, y=-log10(`",new_padj,temp2)))
     }
     else{
-      temp2 <- paste0("),color = col_vals, text=paste(gene_symbol, col_vals), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
+      temp2 <- paste0("),color = col_vals, text=paste(gene_symbol, col_text), key = paste(ensembl_gene_id,gene_symbol,gene_biotype,wiki_link,",paste(names(pathway_dic), collapse = ','),",sep = ';')))")
       eval(parse(text = paste0("geom_point(data=data,aes(x=log2FoldChange, y=-log10(padj",temp2)))
     }
   if(sum(sapply(col_vals,is.numeric))>10){
