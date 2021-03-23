@@ -19,7 +19,6 @@ count2deseq_analysis <- function(input, countdata, pheno,i){
   control <- input[[paste0("control",i)]] #this needs to be adjusted if there are multiple files?
   case <- input[[paste0("case",i)]]
   phenotypes <- factor(pheno[[input[[paste0("group_col",1)]]]])
-  phenotypes <- factor(phenotypes[phenotypes!=control])
   if(input$batch_correction&ncol(pheno)>1){#values need to be updated if batch correction is chosen
     batch <- pheno[[input$batch_col1]]
     samples <- data.frame(row.names=colnames(countdata),
