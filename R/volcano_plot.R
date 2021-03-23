@@ -31,7 +31,8 @@ volcano_plot <- function(input, data, pathway_dic){
   else {
     if(length(unique(col_vals)) > 4){ #avoid matching with overwhelming annotation
       showNotification("the matching term exceeds 4 unique identifiers, only the 4 indentifiers with highest frequency is shown",type = "message")
-      keep_vals <- order(table(col_vals),decreasing = T)[1:4]
+      keep_vals <- col_vals[order(table(col_vals),decreasing = T)][1:4]
+      print(keep_vals)
       col_vals <- ifelse(col_vals%in%keep_vals, col_vals, "Other")
       #col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
     }
