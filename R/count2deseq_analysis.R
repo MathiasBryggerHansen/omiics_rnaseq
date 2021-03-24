@@ -40,10 +40,7 @@ count2deseq_analysis <- function(input, countdata, pheno,i){
   # }
   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
   dds <- DESeq2::DESeq(dds)
-  print(phenotypes)
-  print(control)
   cases <- as.vector(unlist(phenotypes[!phenotypes%in%control]))
-  print(cases)
   for(i in unique(cases)){
     test <- DESeq2::results(dds,contrast = c("phenotypes",i,control))
     if(!exists("de_res")){
@@ -66,9 +63,10 @@ count2deseq_analysis <- function(input, countdata, pheno,i){
     }
     else {
       if (i == input$case1){
-        de_res <- test[,c("baseMean","log2FoldChange","padj")]
-        colnames(de_res) <- c("baseMean",paste0("log2FoldChange"),paste0("padj"))
-        de_res$ensembl_gene_id <- row.names(de_res)
+        colnames(test) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
+        test <- test[,c("log2FoldChange","padj")]
+        test$ensembl_gene_id <- row.names(test)
+        de_res <- merge(de_res, test, by = "ensembl_gene_id")
       }
       else {
         colnames(test) <- c("baseMean",paste0("log2FoldChange_",i),"lfcSE","stat","pvalue",paste0("padj_",i))

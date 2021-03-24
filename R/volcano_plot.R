@@ -86,7 +86,7 @@ volcano_plot <- function(input, data, pathway_dic){
     config(
       toImageButtonOptions = list(
         format = "svg",
-        filename = "volcanoplot",
+        filename = "volcanoplot.svg",
         width = 1500,
         height = 1000
       )
