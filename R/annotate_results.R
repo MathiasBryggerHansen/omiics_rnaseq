@@ -21,6 +21,9 @@ annotate_results <- function(input, data,ensembl2id,pathway_dic,circ = F){
     data$ensembl_gene_id <- row.names(data)
   }
   print("annotate_merge")
+  print(head(data))
+  print(colnames(data))
+  print(head(ensembl2id))
   data <- merge(data,ensembl2id,by = "ensembl_gene_id",all.x = T)#ensembl2id() includes : gene_symbol, wiki_id, biotype
   print("merge_done")
   data$gene_symbol <- gsub(make.names(ifelse(is.na(data$gene_symbol)|data$gene_symbol=="",data$ensembl_gene_id,data$gene_symbol),unique = T),pattern = ".",replacement = "-",fixed = T)
