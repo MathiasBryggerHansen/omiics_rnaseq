@@ -75,9 +75,13 @@ limma_analysis <- function(countdata_norm, phenotypes, auto = F, control){#expec
       log2Top <- log2Combined[cbind(1:nrow(log2Combined),log2Top)]
       ids <- combined$ensembl_gene_id
       combined <- data.frame(cbind(log2Top, padjTop, combined$ensembl_gene_id, combined$baseMean))
+      combined$log2Top <- numeric(combined$log2Top)
+      combined$padjTop <- numeric(combined$padjTop)
+      combined$baseMean <- numeric(combined$baseMean)
       colnames(combined) <- c("log2FoldChange","padj","ensembl_gene_id","baseMean")
     }
   }
+
   row.names(combined) <- combined$ensembl_gene_id
   combined$ensembl_gene_id <- NULL
   res[["fit"]] <- fit
