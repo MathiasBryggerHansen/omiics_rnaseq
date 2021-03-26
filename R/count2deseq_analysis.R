@@ -10,13 +10,12 @@
 #'
 #' @export count2deseq_analysis
 
-count2deseq_analysis <- function(input, countdata, pheno,i){
-  #countdata <- as.matrix(countdata)
+count2deseq_analysis <- function(input, countdata, pheno, i){
   row.names(countdata) <- make.names(gsub("\\..+$", "",row.names(countdata)),unique = T)
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
   res <- list()
-  control <- input[[paste0("control",i)]] #this needs to be adjusted if there are multiple files?
+  control <- input[[paste0("control",i)]]
   case <- input[[paste0("case",i)]]
   phenotypes <- factor(pheno[[input[[paste0("group_col",1)]]]])
   if(input$batch_correction&ncol(pheno)>1){#values need to be updated if batch correction is chosen
@@ -34,10 +33,6 @@ count2deseq_analysis <- function(input, countdata, pheno,i){
                           phenotypes=phenotypes)
     dds <- DESeq2::DESeqDataSetFromMatrix(countData=countdata, samples, design=~phenotypes)
   }
-  # if(sum(grepl(x = phenotypes,pattern = "control|normal|reference|wt",ignore.case = T))>0){
-  #   control <- unique(phenotypes)[grepl(x = unique(phenotypes),pattern = "control|normal|reference|wt",ignore.case = T)]
-  #   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
-  # }
   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
   dds <- DESeq2::DESeq(dds)
   cases <- as.vector(unlist(phenotypes[!phenotypes%in%control]))
