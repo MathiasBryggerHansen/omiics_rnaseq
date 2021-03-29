@@ -55,9 +55,12 @@ volcano_plot <- function(input, data, pathway_dic){
     labs(color = legend_name) +
     if(input$experiment_id!=""){
       if(sum(grepl(colnames(data),pattern = experiment_id)!=2)){
-        showNotification("Your search term does not match a dataset ID", type = "message")
+        showNotification("Your search term does not match a dataset ID", type = "message", duration = 2)
       }
       req(sum(grepl(colnames(data),pattern = experiment_id)==2))
+      else{
+        showNotification("Plotting", type = "message")
+      }
       temp <- colnames(data)[grep(colnames(data),pattern = experiment_id)]
 
       new_padj <- colnames(data)[grep(colnames(data),pattern = experiment_id)[grep(temp,pattern = "padj")]]
