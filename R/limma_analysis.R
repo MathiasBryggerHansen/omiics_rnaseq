@@ -84,7 +84,6 @@ limma_analysis <- function(countdata_norm, phenotypes, auto = F, control){#expec
       combined$log2Top <- as.numeric(combined$log2FoldChange)
       combined$padjTop <- as.numeric(combined$padj)
       combined$baseMean <- as.numeric(combined$baseMean)
-      print(head(as.numeric(baseMean)))
     }
   }
 
