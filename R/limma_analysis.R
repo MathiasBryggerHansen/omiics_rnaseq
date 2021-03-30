@@ -17,6 +17,7 @@ limma_analysis <- function(countdata_norm, phenotypes, auto = F, control){#expec
   f <- factor(phenotypes, levels=unique(phenotypes))
   a <- "contrast.matrix <- makeContrasts("
   c <- ",levels=design)"
+  print(f)
   if(length(unique(f)) == 2){
     if(auto&sum(grepl(x = phenotypes,pattern = "control|normal|reference",ignore.case = T))==1){#is auto, but there is a control (the control parameter is not used in auto)
       control <- names(table(phenotypes))[grepl(names(table(phenotypes)),pattern = "control|normal|reference",ignore.case = T)]
@@ -73,6 +74,7 @@ limma_analysis <- function(countdata_norm, phenotypes, auto = F, control){#expec
       }
     }
     if(auto){#if auto settings only the most significant data is used for each gene
+      print("combining")
       log2Combined <- combined[,grep(colnames(combined),pattern = "log2Fold")]
       padjCombined <- combined[,grep(colnames(combined),pattern = "padj")]
       log2Top <- apply(log2Combined,1,FUN = function(r) {which.max(abs(r))})
@@ -86,7 +88,7 @@ limma_analysis <- function(countdata_norm, phenotypes, auto = F, control){#expec
       combined$baseMean <- as.numeric(combined$baseMean)
     }
   }
-
+  print(head(combined))
   row.names(combined) <- combined$ensembl_gene_id
   combined$ensembl_gene_id <- NULL
   res[["fit"]] <- fit
