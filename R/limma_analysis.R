@@ -18,6 +18,12 @@ limma_analysis <- function(countdata_norm, phenotypes, auto = F, control){#expec
   a <- "contrast.matrix <- makeContrasts("
   c <- ",levels=design)"
   if(length(unique(f)) == 2){
+    if(auto&sum(grepl(x = phenotypes,pattern = "control|normal|reference",ignore.case = T))==1){#is auto, but there is a control (the control parameter is not used in auto)
+      control <- names(table(phenotypes))[grepl(names(table(phenotypes)),pattern = "control|normal|reference",ignore.case = T)]
+    }
+    else if(auto){
+      control <- unique(f)[1]
+    }
     design <- cbind(Control=1,CasevsControl=ifelse(phenotypes==control,1,0))
     fit <- lmFit(countdata_norm, design)
     fit <- eBayes(fit, trend=TRUE)
