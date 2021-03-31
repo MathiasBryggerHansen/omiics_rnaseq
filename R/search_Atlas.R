@@ -66,6 +66,11 @@ search_Atlas <- function(input, atlas_id = F, probe_library = probe_library()) {
         ids <- probe_library$ensembl_gene_id[match(x = ids, probe_library$probe)]
       }
       row.names(temp) <- make.names(ids,unique = T)
+      if(sum(is.na(ids)) == length(ids)){
+        showNotification("Gene IDs of experiment not recognized", type = "message")
+        stop("Gene IDs of experiment not recognized")
+      }
+
       res[[p_id]] <- limma_analysis(countdata = temp,phenotypes = pheno, control = input$control1, auto = T)$test
     })
   }
