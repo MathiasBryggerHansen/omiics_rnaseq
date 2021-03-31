@@ -63,9 +63,11 @@ search_Atlas <- function(input, atlas_id = F, probe_library = probe_library()) {
       }
       p_id <- gsub(fi,pattern = "-",replacement = "_")
       ids <- row.names(temp)
+      print(head(temp))
       if(!grepl(ids[1],pattern = "ENS")){
         ids <- probe_library$ensembl_gene_id[match(x = ids, probe_library$probe)]
       }
+      print(head(ids))
       row.names(temp) <- make.names(ids,unique = T)
       print("w3")
       if(sum(is.na(ids)) == length(ids)){ #One reason for this error is that not all the R files (from ebi) are structured correctly with wrong feature names. Some of this could be fixed by using the .txt tables instead.
