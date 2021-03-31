@@ -65,7 +65,7 @@ search_Atlas <- function(input, atlas_id = F, probe_library = probe_library()) {
       ids <- row.names(temp)
       print(head(temp))
       if(!grepl(ids[1],pattern = "ENS")){
-        ids <- probe_library$ensembl_gene_id[match(x = ids, probe_library$probe)]
+        ids <- try(probe_library$ensembl_gene_id[match(x = ids, probe_library$probe)])
       }
       print(head(ids))
       row.names(temp) <- make.names(ids,unique = T)
