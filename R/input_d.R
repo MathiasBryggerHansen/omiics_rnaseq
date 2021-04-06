@@ -13,7 +13,6 @@ input_d <- function(input, probe_library, id_conv){
     if(input[[paste0("combined",d)]]){#test for combined text file
       h <- readLines(input[[paste0("count",d)]][["datapath"]], n = 1)
       if(grepl(h, pattern = "featureCounts")){ #if the dataset is raw from featureCounts
-        print("jkhvjkhb")
         counts_data <-tryCatch({
           read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",skip = 1,stringsAsFactors = F)
         },
@@ -22,7 +21,6 @@ input_d <- function(input, probe_library, id_conv){
           showNotification(cond,type = "message")
           return(NULL)
         })
-        print("sd<flknj")
         colnames(counts_data) <- sapply(colnames(counts_data),FUN = function(x) strsplit(x, split = ".", fixed = T)[[1]][1]) #set sample ids
         counts_data <- counts_data[,-c(seq(2,6))] #remove Chr	Start	End	Strand	Length
       }
@@ -60,13 +58,19 @@ input_d <- function(input, probe_library, id_conv){
     if(input$gene_filter){
       counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
     }
+    print("jbh")
     pheno_data <- tryCatch({
       read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T,stringsAsFactors = F)},#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
       warning = function(cond) {
         showNotification("The count file could not be read returning:",type = "message")
         showNotification(cond,type = "message")
+        return(NULL)}
+        error = function(cond) {
+          showNotification("The count file could not be read returning:",type = "message")
+          showNotification(cond,type = "message")
         return(NULL)
-      })
+    })
+    print("lkjbngr")
     req(!is.null(pheno_data)&!is.null(count_data))
     pheno_keep <- grepl(colnames(counts_data),pattern = paste(pheno_data[[input$sample_col1]],collapse = "|")) #needs fix to multiple files
     if(sum(pheno_keep)==0){
