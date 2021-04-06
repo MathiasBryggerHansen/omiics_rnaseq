@@ -61,6 +61,7 @@ input_d <- function(input, probe_library, id_conv){
     print("jbh")
     print(input)
     f <- input[[paste0("phenotype",d)]][["datapath"]]
+
     pheno_data <- readFile(f)
     print("lkjbngr")
     req(!is.null(pheno_data)&!is.null(count_data))
