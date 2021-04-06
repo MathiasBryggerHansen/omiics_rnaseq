@@ -16,7 +16,7 @@ input_d <- function(input, probe_library, id_conv){
         counts_data <-tryCatch({
           read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",skip = 1,stringsAsFactors = F)
         },
-        warning <- function(cond) {
+        warning = function(cond) {
           showNotification("The count file could not be read returning:",type = "message")
           showNotification(cond,type = "message")
           return(NULL)
@@ -61,7 +61,7 @@ input_d <- function(input, probe_library, id_conv){
     }
     pheno_data <- tryCatch({
       read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T,stringsAsFactors = F)},#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
-      warning <- function(cond) {
+      warning = function(cond) {
         showNotification("The count file could not be read returning:",type = "message")
         showNotification(cond,type = "message")
         return(NULL)
