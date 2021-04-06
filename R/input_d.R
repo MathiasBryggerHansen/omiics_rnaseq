@@ -58,13 +58,8 @@ input_d <- function(input, probe_library, id_conv){
     if(input$gene_filter){
       counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
     }
-    print("jbh")
-    print(input)
-    f <- input[[paste0("phenotype",d)]][["datapath"]]
-
-    pheno_data <- readFile(f)
-    print("lkjbngr")
-    req(!is.null(pheno_data)&!is.null(count_data))
+    pheno_data <- readFile(input[[paste0("phenotype",d)]][["datapath"]])
+    req(!is.null(pheno_data)&!is.null(counts_data))
     pheno_keep <- grepl(colnames(counts_data),pattern = paste(pheno_data[[input$sample_col1]],collapse = "|")) #needs fix to multiple files
     if(sum(pheno_keep)==0){
       showNotification("Are you sure you chose the correct column numbers? No rows match.")
