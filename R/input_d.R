@@ -81,7 +81,7 @@ input_d <- function(input, probe_library, id_conv){
       counts_data$Mouse <- NULL
       counts_data$Rat <- NULL
       counts_data$Human <- NULL
-      #counts_data$ensembl_gene_id_rat <- NULL
+      counts_data$ensembl_gene_id_rat <- NULL
     }
     counts_data <- counts_data[order(row.names(counts_data)),]
     files[[paste0("count",d)]] <- counts_data

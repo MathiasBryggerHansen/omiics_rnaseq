@@ -16,14 +16,14 @@
 #'
 #' @return data.frame
 
-annotate_results <- function(input, data, ensembl2id, pathway_dic, circ = F){
+annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic, circ = F){
   if(!circ){#circRNA standard data structure does not include id column
     data$ensembl_gene_id <- row.names(data)
   }
   data <- merge(data,ensembl2id,by = "ensembl_gene_id",all.x = T)#ensembl2id() includes : gene_symbol, wiki_id, biotype
   data$gene_symbol <- gsub(make.names(ifelse(is.na(data$gene_symbol)|data$gene_symbol=="",data$ensembl_gene_id,data$gene_symbol),unique = T),pattern = ".",replacement = "-",fixed = T)
-  if(input$species == "human"|input$species == "mouse"){ #Transcription factor annotation
-    tf_data <- read.table(paste0("data/trrust_rawdata.",input$species,".tsv"),header = T) #this could be more general
+  if(input$species == "human"|input$species == "mouse"|input$species == "rat"){ #Transcription factor annotation
+    tf_data <- read.table(paste0("data/trrust_rawdata.",spec,".tsv"),header = T) #this could be more general
     tf_data$position <- NULL
     data$TF <- data$gene_symbol%in%tf_data$gene_symbol
   }
@@ -46,6 +46,14 @@ annotate_results <- function(input, data, ensembl2id, pathway_dic, circ = F){
       data[[db]] <- "-"
     }
   }
+
+  if(input$species == "rat"){
+    data <- merge(data, id_conv, by.x = "ensembl_gene_id", by.y = "Mouse") #since mouse is the standard using rat
+    data$ensembl_gene_id_rat <- data$Rat
+    data$Rat <- NULL
+    data$Human <- NULL
+  }
+
   wiki_link <- sapply(data$wikigene_id, function(x) ifelse(is.na(x),"-",paste0(c("https://www.wikigenes.org/e/gene/e/",x,".html"),collapse = "")))
   refs <- paste0("<a href='",  wiki_link, "' target='_blank'>",wiki_link,"</a>")
   data$wiki_link <- refs
