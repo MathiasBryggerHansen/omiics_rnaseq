@@ -61,17 +61,7 @@ input_d <- function(input, probe_library, id_conv){
     print("jbh")
     print(input)
     f <- input[[paste0("phenotype",d)]][["datapath"]]
-    pheno_data <- tryCatch({
-      read.table(f,header = T,stringsAsFactors = F)},#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
-      warning = function(cond) {
-        showNotification("The count file could not be read returning:",type = "message")
-        showNotification(cond,type = "message")
-        return(NULL)},
-        error = function(cond) {
-          showNotification("The count file could not be read returning:",type = "message")
-          showNotification(cond,type = "message")
-        return(NULL)}
-      )
+    pheno_data <- readFile(f)
     print("lkjbngr")
     req(!is.null(pheno_data)&!is.null(count_data))
     pheno_keep <- grepl(colnames(counts_data),pattern = paste(pheno_data[[input$sample_col1]],collapse = "|")) #needs fix to multiple files
