@@ -7,6 +7,7 @@
 #' @export testGenes
 
 testGenes <- function(gene_vector, ebi_id, input) {
+  species <- ebi_id[[input$species]]
   out <- tryCatch(
     {
       gene_vector <- as.vector(na.omit(gsub("\\..+$", "",x = gene_vector))) #remove ENS.X subscripts
