@@ -29,7 +29,7 @@ annotate_results <- function(input, data, ensembl2id, pathway_dic, circ = F){
   }
   data <- append_secondary_data(input, data,de_results = gene_results_de())#append the secondary datasets
   data <- append_annotation(input, data)#append annotation
-  if(input$species == "human"|input$species == "mouse"){ #add pathway information
+  if(input$species == "human"|input$species == "mouse"|input$species == "rat"){ #add pathway information
     paths <- data.frame(matrix(rep(NA,length(data$gene_symbol)*length(names(pathway_dic))),ncol = length(names(pathway_dic))))
     colnames(paths) <- names(pathway_dic)
     for(db in 1:length(names(pathway_dic))){
