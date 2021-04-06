@@ -76,7 +76,7 @@ input_d <- function(input, probe_library, id_conv){
 
     if(input$species == "rat"){#if
       counts_data$ensembl_gene_id_rat <- row.names(counts_data)
-      counts_data <- merge(id_conv,counts_data,by.x = "rat", by.y = "ensembl_gene_id_rat")
+      counts_data <- merge(id_conv,counts_data,by.x = "Rat", by.y = "ensembl_gene_id_rat")
       row.names(counts_data) <- counts_data$mouse
       counts_data$mouse <- NULL
       counts_data$rat <- NULL
