@@ -13,6 +13,7 @@ input_d <- function(input, probe_library, id_conv){
     if(input[[paste0("combined",d)]]){#test for combined text file
       h <- readLines(input[[paste0("count",d)]][["datapath"]], n = 1)
       if(grepl(h, pattern = "featureCounts")){ #if the dataset is raw from featureCounts
+        print("jkhvjkhb")
         counts_data <-tryCatch({
           read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "#",skip = 1,stringsAsFactors = F)
         },
@@ -21,7 +22,7 @@ input_d <- function(input, probe_library, id_conv){
           showNotification(cond,type = "message")
           return(NULL)
         })
-
+        print("sd<flknj")
         colnames(counts_data) <- sapply(colnames(counts_data),FUN = function(x) strsplit(x, split = ".", fixed = T)[[1]][1]) #set sample ids
         counts_data <- counts_data[,-c(seq(2,6))] #remove Chr	Start	End	Strand	Length
       }
@@ -29,7 +30,7 @@ input_d <- function(input, probe_library, id_conv){
         counts_data <-tryCatch({
           read.csv2(input[[paste0("count",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
         },
-        warning <- function(cond) {
+        warning = function(cond) {
           showNotification("The count file could not be read returning:",type = "message")
           showNotification(cond,type = "message")
           return(NULL)
