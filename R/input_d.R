@@ -7,7 +7,7 @@
 #'
 #' @return list of "count", "pheno" and "circ" (if circRNA data is included)
 
-input_d <- function(input, probe_library){
+input_d <- function(input, probe_library, id_conv){
   files <- list()
   for( d in 1:input$nfiles){
     if(input[[paste0("combined",d)]]){#test for combined text file
@@ -22,7 +22,7 @@ input_d <- function(input, probe_library){
       }
     }
 
-    else{
+    else{#if the files are in a zipped folder
       d_path <- input[[paste0("count",d)]][["datapath"]]
       temp_dir <- paste0("./temp",d)
       unlink(temp_dir, recursive=TRUE,force = T) #remove if exists
@@ -51,16 +51,26 @@ input_d <- function(input, probe_library){
     }
     req(sum(pheno_keep)!=0)
     ids <- row.names(counts_data)
+
     if(!grepl(ids[1],pattern = "ENS")){
       ids <- probe_library()$ensembl_gene_id[match(x = ids, probe_library()$probe)]
       row.names(counts_data) <- make.names(ids,unique = T)
     }
     counts_data <- counts_data[,c(pheno_keep)]#colnames(counts_data)%in%pheno_data[[2]]] #remove samples not in pheno
-    colnames(counts_data) <- pheno_data[[input$sample_col1]]#fix
-    counts_data <- counts_data[order(row.names(counts_data)),] #a way to secure compatible order????
+    colnames(counts_data) <- pheno_data[[input$sample_col1]]
+
+    if(input$species == "rat"){#if
+      counts_data$ensembl_gene_id_rat <- row.names(counts_data)
+      counts_data <- merge(id_conv,counts_data,by.x = "rat", by.y = "ensembl_gene_id_rat")
+      row.names(counts_data) <- counts_data$mouse
+      counts_data$mouse <- NULL
+      counts_data$rat <- NULL
+      counts_data$human <- NULL
+      #counts_data$ensembl_gene_id_rat <- NULL
+    }
+    counts_data <- counts_data[order(row.names(counts_data)),]
     files[[paste0("count",d)]] <- counts_data
     files[[paste0("pheno",d)]] <- pheno_data
-    print(pheno_data)
     files[[paste0("circRNA",d)]] <- circ_data
   }
   return(files)

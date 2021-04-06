@@ -10,12 +10,12 @@
 #' @export de_circ
 
 
-de_circ <- function(data, pheno){
-  sampleNumber = 6#length(pheno[[1]])
-  pheno <- data.frame(c(rep("S34F",3),rep("wt",3)))
+de_circ <- function(input, data, pheno, ensembl2id, i){
+  sampleNumber = length(pheno[[1]])
+  pheno <- data.frame(pheno[[1]])#data.frame(c(rep("S34F",3),rep("wt",3)))
   data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
   data$gene_id <- NULL
-  data <- merge(data,ensembl2id(),all.x = T, by = "ensembl_gene_id")
+  data <- merge(data,ensembl2id,all.x = T, by = "ensembl_gene_id")
   colnames(data) = gsub(pattern = ".CIRI2.circRNAs.txt_BSJ|.CIRI2.circRNAs.txt_LIN", "", colnames(data))
   row.names(data) <- paste(data$gene_symbol,data$Internal_circRNA_ID,sep = "_")
   counts <- data[,c(14:(2*sampleNumber + 13))] #(data[,c(13:(2*sampleNumber + 12))])
@@ -26,7 +26,7 @@ de_circ <- function(data, pheno){
   counts$sum_lin <- rowSums(counts[lin_index])
   counts$sum_junction <- rowSums(counts[j_index])#######overwrite pheno
   counts$circToLin <- counts$sum_junction/counts$sum_lin #2*counts[j_index]/(2*counts[j_index]+counts[lin_index])
-  res <- count2deseq_analysis(countdata = rawdata,pheno = pheno)
+  res <- count2deseq_analysis(input = input, countdata = rawdata,pheno = pheno, i = i)
   res[["circ_info"]] <- counts[,c("ensembl_gene_id","circToLin","sum_lin","sum_junction")]
   return(res)
 }

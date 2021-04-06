@@ -15,7 +15,6 @@ search_Atlas <- function(input, atlas_id = F, probe_library = probe_library()) {
   #uses probe library to convert probes to ensembl gene id
   if(atlas_id){
     acc <- unlist(strsplit(gsub(input$Atlas_ids,pattern = " ",replacement = ""),split = ","))
-    print(acc)
     allExps <- tryCatch({
       getAtlasData(acc)
     },
@@ -59,13 +58,12 @@ search_Atlas <- function(input, atlas_id = F, probe_library = probe_library()) {
       }
       else{
         temp <- exprs(temp)
-        print("her")
       }
       p_id <- gsub(fi,pattern = "-",replacement = "_")
       ids <- row.names(temp)
       print(head(temp))
       if(!grepl(ids[1],pattern = "ENS")){
-        ids <- try(probe_library$ensembl_gene_id[match(x = ids, probe_library$probe)])
+        ids <- probe_library$ensembl_gene_id[match(x = ids, probe_library$probe)]
       }
       print(head(ids))
       row.names(temp) <- make.names(ids,unique = T)
