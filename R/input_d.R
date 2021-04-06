@@ -59,6 +59,8 @@ input_d <- function(input, probe_library, id_conv){
       counts_data <- counts_data[apply(X = counts_data,1, function(x) var(x)!=0),] #remove zero variance genes, Warning in var(x) : NAs introduced by coercion
     }
     print("jbh")
+    print(input)
+    print(input[[paste0("phenotype",d)]][["datapath"]])
     pheno_data <- tryCatch({
       read.table(input[[paste0("phenotype",d)]][["datapath"]],header = T,stringsAsFactors = F)},#read_pheno(input[[paste0("phenotype",d)]][["datapath"]]) #phenotype data is always assumed to be tabulated, the function handles some errors in read.csv
       warning = function(cond) {
@@ -68,8 +70,8 @@ input_d <- function(input, probe_library, id_conv){
         error = function(cond) {
           showNotification("The count file could not be read returning:",type = "message")
           showNotification(cond,type = "message")
-        return(NULL)
-    })
+        return(NULL)}
+      )
     print("lkjbngr")
     req(!is.null(pheno_data)&!is.null(count_data))
     pheno_keep <- grepl(colnames(counts_data),pattern = paste(pheno_data[[input$sample_col1]],collapse = "|")) #needs fix to multiple files
