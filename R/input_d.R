@@ -64,7 +64,7 @@ input_d <- function(input, probe_library, id_conv){
       warning = function(cond) {
         showNotification("The count file could not be read returning:",type = "message")
         showNotification(cond,type = "message")
-        return(NULL)}
+        return(NULL)},
         error = function(cond) {
           showNotification("The count file could not be read returning:",type = "message")
           showNotification(cond,type = "message")
