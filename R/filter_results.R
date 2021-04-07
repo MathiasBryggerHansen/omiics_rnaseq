@@ -5,7 +5,6 @@
 #' @return the filtered dataframe
 
 filter_results <- function(input, data){
-  print(str(data))
   data_sign <- data[data$padj < eval(parse(text = input$p)) & abs(data$log2FoldChange) > log2(input$fc),]
   print(str(data_sign))
   data_not_sign <- data[data$padj > eval(parse(text = input$p)) | abs(data$log2FoldChange) < log2(input$fc),]

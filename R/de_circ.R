@@ -12,21 +12,35 @@
 
 de_circ <- function(input, data, pheno, ensembl2id, i){
   sampleNumber = length(pheno[[1]])
-  pheno <- data.frame(pheno[[1]])#data.frame(c(rep("S34F",3),rep("wt",3)))
-  data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
+  #pheno <- data.frame(pheno[[1]])#data.frame(c(rep("S34F",3),rep("wt",3)))
+
   data$gene_id <- NULL
-  data <- merge(data,ensembl2id,all.x = T, by = "ensembl_gene_id")
-  colnames(data) = gsub(pattern = ".CIRI2.circRNAs.txt_BSJ|.CIRI2.circRNAs.txt_LIN", "", colnames(data))
-  row.names(data) <- paste(data$gene_symbol,data$Internal_circRNA_ID,sep = "_")
-  counts <- data[,c(14:(2*sampleNumber + 13))] #(data[,c(13:(2*sampleNumber + 12))])
-  j_index = seq(1,(2*sampleNumber),2)
-  lin_index = seq(2,(2*sampleNumber),2)
-  rawdata <- counts[,j_index]
-  counts$ensembl_gene_id <- data$ensembl_gene_id
-  counts$sum_lin <- rowSums(counts[lin_index])
-  counts$sum_junction <- rowSums(counts[j_index])#######overwrite pheno
+  p <- pheno[[1]]
+  ##if the SA/SD method is used, sum up these:
+  if(sum(grepl(colnames(data),pattern = "_SA$")) == sampleNumber){
+    junctions <- grepl(colnames(counts),pattern = "_SD$|_SA$")&!grepl(colnames(counts),pattern = "total")
+    junction_data <- data[,junctions][,seq(1,length(p),2)] + data[,junctions][,seq(2,length(p),2)]
+    colnames(junction_data) <- p
+    data$sum_lin <- data$total_SD + data$total_SA
+    data$sum_junction <- data$total_junction
+    data$gene_symbol <- gsub(data$circRNA_name,pattern = ".*[0-9]_",replacement = "") #this should remove the circRNA tag
+    data <- merge(data, ensembl2id, by = "gene_symbol")
+  }
+  else {#if CIRI2 with BSJ/LIN
+    data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
+    junctions <- grepl(colnames(counts),pattern = "CIRI2.circRNAs.txt_BSJ$")
+    linear <- grepl(colnames(counts),pattern = "CIRI2.circRNAs.txt_LIN$")
+    data <- merge(data, ensembl2id, by = "ensembl_gene_id")
+    row.names(data) <- paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
+    colnames(data) = gsub(pattern = ".CIRI2.circRNAs.txt_BSJ|.CIRI2.circRNAs.txt_LIN", "", colnames(data))
+    junction_data <- data[,junctions][,seq(1,length(p),2)]
+    linear_data <- data[,linear][,seq(1,length(p),2)]
+    data$sum_lin <- apply(linear_data,1, FUN = sum)
+    data$sum_junction <- data$Total_BSJ
+  }
   counts$circToLin <- counts$sum_junction/counts$sum_lin #2*counts[j_index]/(2*counts[j_index]+counts[lin_index])
-  res <- count2deseq_analysis(input = input, countdata = rawdata,pheno = pheno, i = i)
+  res <- count2deseq_analysis(input = input, countdata = junction_data,pheno = pheno, i = i)
   res[["circ_info"]] <- counts[,c("ensembl_gene_id","circToLin","sum_lin","sum_junction")]
+  print(head(res))
   return(res)
 }
