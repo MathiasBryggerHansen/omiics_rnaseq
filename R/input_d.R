@@ -45,8 +45,6 @@ input_d <- function(input, probe_library, id_conv){
       dir_name <- list.files(temp_dir)
       counts_data <- read_files(paste0(temp_dir,"/",dir_name),d)
     }
-    print(d)
-    print(!is.null(input[[paste0("circRNA",d)]]))
     if(!is.null(input[[paste0("circRNA",d)]])){#test circ data
       circ_data <- read.csv2(input[[paste0("circRNA",d)]][["datapath"]], sep = input[[paste0("sep",d)]], header = T,comment.char = "!",stringsAsFactors = F) #comment.char = "!" in CEL files
     }

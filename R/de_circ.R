@@ -16,10 +16,12 @@ de_circ <- function(input, data, pheno, ensembl2id, i){
 
   data$gene_id <- NULL
   p <- pheno[[1]]
+  print(p)
   ##if the SA/SD method is used, sum up these:
   if(sum(grepl(colnames(data),pattern = "_SA$")) == sampleNumber){
     junctions <- grepl(colnames(data),pattern = "_SD$|_SA$")&!grepl(colnames(data),pattern = "total")
     junction_data <- data[,junctions][,seq(1,length(p),2)] + data[,junctions][,seq(2,length(p),2)]
+    print(head(junction_data))
     colnames(junction_data) <- p
     data$sum_lin <- data$total_SD + data$total_SA
     data$sum_junction <- data$total_junction
