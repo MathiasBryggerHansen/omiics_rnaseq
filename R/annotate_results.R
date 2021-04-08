@@ -27,12 +27,7 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
     temp$ensembl_gene_id <- data[["circ_info"]]$ensembl_gene_id
     data <- temp
   }
-  print(circ)
-  print(nrow(data))
-  print(min(data$padj))
   data <- merge(data,ensembl2id,by = "ensembl_gene_id",all.x = T)#ensembl2id() includes : gene_symbol, wiki_id, biotype
-  print("merged")
-  print(nrow(data))
   data$gene_symbol <- gsub(make.names(ifelse(is.na(data$gene_symbol)|data$gene_symbol=="",data$ensembl_gene_id,data$gene_symbol),unique = T),pattern = ".",replacement = "-",fixed = T)
   if(input$species == "human"|input$species == "mouse"|input$species == "rat"){ #Transcription factor annotation
     tf_data <- read.table(paste0("data/trrust_rawdata.",spec,".tsv"),header = T) #this could be more general
@@ -41,8 +36,6 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
   }
   data <- append_secondary_data(input, data,de_results = gene_results_de())#append the secondary datasets
   data <- append_annotation(input, data)#append annotation
-  print(nrow(data))
-  print("her...")
   if(input$species == "human"|input$species == "mouse"|input$species == "rat"){ #add pathway information
     paths <- data.frame(matrix(rep(NA,length(data$gene_symbol)*length(names(pathway_dic))),ncol = length(names(pathway_dic))))
     colnames(paths) <- names(pathway_dic)
@@ -72,7 +65,5 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
   refs <- paste0("<a href='",  wiki_link, "' target='_blank'>",wiki_link,"</a>")
   data$wiki_link <- refs
   data$wikigene_id <- NULL
-  data <- data[order(data$padj),]
-  print(head(data))
   return(data)
 }
