@@ -38,6 +38,7 @@ de_circ <- function(input, data, pheno, ensembl2id, i){
     colnames(data) = gsub(pattern = ".CIRI2.circRNAs.txt_BSJ|.CIRI2.circRNAs.txt_LIN", "", colnames(data))
     print("de_circ32")
     junction_data <- data[,junctions]
+    print(summary(junction_data))
     linear_data <- data[,linear]
     data$sum_lin <- apply(linear_data,1, FUN = sum)
     data$sum_junction <- data$Total_BSJ
