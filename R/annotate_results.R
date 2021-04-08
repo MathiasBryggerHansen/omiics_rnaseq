@@ -39,6 +39,7 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
   }
   data <- append_secondary_data(input, data,de_results = gene_results_de())#append the secondary datasets
   data <- append_annotation(input, data)#append annotation
+  print("her...")
   if(input$species == "human"|input$species == "mouse"|input$species == "rat"){ #add pathway information
     paths <- data.frame(matrix(rep(NA,length(data$gene_symbol)*length(names(pathway_dic))),ncol = length(names(pathway_dic))))
     colnames(paths) <- names(pathway_dic)
@@ -69,5 +70,7 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
   data$wiki_link <- refs
   data$wikigene_id <- NULL
   data <- data[order(data$padj),]
+  print("HER")
+  print(head(data))
   return(data)
 }
