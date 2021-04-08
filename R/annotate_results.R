@@ -59,7 +59,5 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
   data$wiki_link <- refs
   data$wikigene_id <- NULL
   data <- data[order(data$padj),]
-  print("annotated")
-  print(head(data))
   return(data)
 }
