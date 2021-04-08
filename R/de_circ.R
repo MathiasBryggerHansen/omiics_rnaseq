@@ -31,10 +31,10 @@ de_circ <- function(input, data, pheno, ensembl2id, i){
   else {#if CIRI2 with BSJ/LIN
     print("de_circ31")
     data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
-    junctions <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_BSJ$")
-    linear <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_LIN$")
     data <- merge(data, ensembl2id, by = "ensembl_gene_id")
     row.names(data) <- paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
+    junctions <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_BSJ$")
+    linear <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_LIN$")
     colnames(data) = gsub(pattern = ".CIRI2.circRNAs.txt_BSJ|.CIRI2.circRNAs.txt_LIN", "", colnames(data))
     print("de_circ32")
     junction_data <- data[,junctions]
