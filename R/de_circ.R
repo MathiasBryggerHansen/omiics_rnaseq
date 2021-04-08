@@ -44,7 +44,7 @@ de_circ <- function(input, data, pheno, ensembl2id, i){
     data$sum_junction <- data$Total_BSJ
   }
   data$circToLin <- data$sum_junction/data$sum_lin
-  res <- count2deseq_analysis(input = input, countdata = junction_data,pheno = pheno, i = i)
+  res[["test"]] <- count2deseq_analysis(input = input, countdata = junction_data,pheno = pheno, i = i)
   res[["circ_info"]] <- data[,c("ensembl_gene_id","circToLin","sum_lin","sum_junction")]
   print(head(res))
   return(res)
