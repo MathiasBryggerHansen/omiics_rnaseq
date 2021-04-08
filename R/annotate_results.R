@@ -28,9 +28,11 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
     data <- temp
   }
   print(circ)
-  print(head(data))
+  print(nrow(data))
+  print(min(data$padj))
   data <- merge(data,ensembl2id,by = "ensembl_gene_id",all.x = T)#ensembl2id() includes : gene_symbol, wiki_id, biotype
   print("merged")
+  print(nrow(data))
   data$gene_symbol <- gsub(make.names(ifelse(is.na(data$gene_symbol)|data$gene_symbol=="",data$ensembl_gene_id,data$gene_symbol),unique = T),pattern = ".",replacement = "-",fixed = T)
   if(input$species == "human"|input$species == "mouse"|input$species == "rat"){ #Transcription factor annotation
     tf_data <- read.table(paste0("data/trrust_rawdata.",spec,".tsv"),header = T) #this could be more general
@@ -39,6 +41,7 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
   }
   data <- append_secondary_data(input, data,de_results = gene_results_de())#append the secondary datasets
   data <- append_annotation(input, data)#append annotation
+  print(nrow(data))
   print("her...")
   if(input$species == "human"|input$species == "mouse"|input$species == "rat"){ #add pathway information
     paths <- data.frame(matrix(rep(NA,length(data$gene_symbol)*length(names(pathway_dic))),ncol = length(names(pathway_dic))))
