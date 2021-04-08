@@ -14,12 +14,10 @@ de_circ <- function(input, data, pheno, ensembl2id, i){
   sampleNumber = length(pheno[[1]])
   #pheno <- data.frame(pheno[[1]])#data.frame(c(rep("S34F",3),rep("wt",3))
   p <- pheno[[1]]
-  res <- list()
   ##if the SA/SD method is used, sum up these:
   if(sum(grepl(colnames(data),pattern = "_SA$")) == sampleNumber){
     junctions <- grepl(colnames(data),pattern = "_SD$|_SA$")&!grepl(colnames(data),pattern = "total")
     junction_data <- data[,junctions][,seq(1,length(p),2)] + data[,junctions][,seq(2,length(p),2)]
-    print(head(junction_data))
     colnames(junction_data) <- p
     data$sum_lin <- data$total_SD + data$total_SA
     data$sum_junction <- data$total_junction
@@ -34,13 +32,14 @@ de_circ <- function(input, data, pheno, ensembl2id, i){
     linear <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_LIN$")
     colnames(data) = gsub(pattern = ".CIRI2.circRNAs.txt_BSJ|.CIRI2.circRNAs.txt_LIN", "", colnames(data))
     junction_data <- data[,junctions]
-    print(summary(junction_data))
     linear_data <- data[,linear]
     data$sum_lin <- apply(linear_data,1, FUN = sum)
     data$sum_junction <- data$Total_BSJ
   }
   data$circToLin <- data$sum_junction/data$sum_lin
-  res[["test"]] <- count2deseq_analysis(input = input, countdata = junction_data,pheno = pheno, i = i)
+  res <- count2deseq_analysis(input = input, countdata = junction_data,pheno = pheno, i = i)
   res[["circ_info"]] <- data[,c("ensembl_gene_id","circToLin","sum_lin","sum_junction")]
+  print("her")
+  print(head(res[["test"]]))
   return(res)
 }
