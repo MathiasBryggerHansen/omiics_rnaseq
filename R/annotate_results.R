@@ -17,14 +17,16 @@
 #' @return data.frame
 
 annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic, circ = F){
-  data <- data[["test"]]
+
   if(!circ){#circRNA standard data structure does not include id column
+    data <- data[["test"]]
     data$ensembl_gene_id <- row.names(data)
   }
   else{
+    data <- data[["circRNA1"]][["test"]]
     print(str(data))
-    print(head(data[["circ_info"]]))
-    data$ensembl_gene_id <- data[["circ_info"]]$ensembl_gene_id
+    print(head(data[["circRNA1"]][["circ_info"]]))
+    data$ensembl_gene_id <- data[["circRNA1"]][["circ_info"]]$ensembl_gene_id
   }
   print(circ)
   print(head(data))
