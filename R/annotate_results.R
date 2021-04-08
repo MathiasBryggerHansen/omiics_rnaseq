@@ -17,8 +17,12 @@
 #' @return data.frame
 
 annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic, circ = F){
+  data <- data[["test"]]
   if(!circ){#circRNA standard data structure does not include id column
     data$ensembl_gene_id <- row.names(data)
+  }
+  else{
+    data$ensembl_gene_id <- data[["circ_info"]]$ensembl_gene_id
   }
   data <- merge(data,ensembl2id,by = "ensembl_gene_id",all.x = T)#ensembl2id() includes : gene_symbol, wiki_id, biotype
   data$gene_symbol <- gsub(make.names(ifelse(is.na(data$gene_symbol)|data$gene_symbol=="",data$ensembl_gene_id,data$gene_symbol),unique = T),pattern = ".",replacement = "-",fixed = T)
