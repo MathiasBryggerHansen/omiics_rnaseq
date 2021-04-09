@@ -17,7 +17,7 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
   res <- list()
   control <- input[[paste0("control",i)]]
   case <- input[[paste0("case",i)]]
-  phenotypes <- factor(pheno[[input[[paste0("group_col",1)]]]])
+  phenotypes <- factor(pheno[[input[[paste0("group_col",i)]]]]) #1 --> i
   if(input$batch_correction&ncol(pheno)>1){#values need to be updated if batch correction is chosen
     batch <- pheno[[input$batch_col1]]
     samples <- data.frame(row.names=colnames(countdata),
@@ -37,7 +37,7 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
   dds <- DESeq2::DESeq(dds)
   cases <- as.vector(unlist(phenotypes[!phenotypes%in%control]))
   for(i in unique(cases)){
-    test <- DESeq2::results(dds,contrast = c("phenotypes",i,control))
+    test <- data.frame(DESeq2::results(dds,contrast = c("phenotypes",i,control)))
     if(!exists("de_res")){
       if(length(unique(cases)) == 1){
         de_res <- test
@@ -45,7 +45,7 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
         de_res <- de_res[,c("baseMean","log2FoldChange","padj")]
         de_res$ensembl_gene_id <- row.names(de_res)
       }
-      if (i == input$case1){
+      if (i == case){
         de_res <- test[,c("baseMean","log2FoldChange","padj")]
         colnames(de_res) <- c("baseMean",paste0("log2FoldChange"),paste0("padj"))
         de_res$ensembl_gene_id <- row.names(de_res)
@@ -57,7 +57,7 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
       }
     }
     else {
-      if (i == input$case1){
+      if (i == case){
         colnames(test) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
         test <- test[,c("log2FoldChange","padj")]
         test$ensembl_gene_id <- row.names(test)
