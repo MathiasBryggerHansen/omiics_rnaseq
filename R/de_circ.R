@@ -48,10 +48,13 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   row.names(data_lin) <- make.names(gsub("\\..+$", "",row.names(data_lin)),unique = T)
   data <- rbind(junction_data, data_lin)
   res <- count2deseq_analysis(input = input, countdata = junction_data,pheno = pheno, i = i)
-  print(head(res[["test"]]))
+  print(summary(res[["test"]]))
+  print(tail(res[["test"]]))
   res[["test"]] <- res[["test"]][row.names(res)%in%row.names(junction_data),]
+  print(tail(res[["test"]]))
   res[["test"]] <- res[["test"]][order(row.names(res[["test"]])),]
   data <- data[order(row.names(data)),] #make sure that the ids match in order from info file and DE res
+  print(colnames(data))
   res[["circ_info"]] <- data[,c("ensembl_gene_id","circToLin","sum_lin","sum_junction")]
   return(res)
 }
