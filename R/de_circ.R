@@ -33,7 +33,7 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
     data <- merge(data, ensembl2id, by = "ensembl_gene_id")
     row.names(data) <- paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
-    junctions <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_BSJ$|ensembl_gene_id")
+    junctions <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_BSJ$")
     linear <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_LIN$")
     colnames(data) = gsub(pattern = ".CIRI2.circRNAs.txt_BSJ|.CIRI2.circRNAs.txt_LIN", "", colnames(data))
     junction_data <- data[,junctions]
@@ -43,8 +43,9 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     data$sum_junction <- data$Total_BSJ
   }
   data$circToLin <- data$sum_junction/data$sum_lin
-  print(head(data))
+  print(head(junction_data))
   print(head(data_lin))
+  row.names(data_lin) <- make.names(gsub("\\..+$", "",row.names(data_lin)),unique = T)
   data <- rbind(junction_data, data_lin)
   res <- count2deseq_analysis(input = input, countdata = junction_data,pheno = pheno, i = i)
   print(head(res[["test"]]))
