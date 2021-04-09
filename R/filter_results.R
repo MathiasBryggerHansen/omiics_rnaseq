@@ -8,7 +8,7 @@ filter_results <- function(input, data){
   print(head(data))
   print(input)
   print(str(data))
-  pritn(summary(data))
+  print(summary(data))
   print(input$p)
   print(input$fc)
   print(min(data$padj, na.rm = T))
