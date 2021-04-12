@@ -39,7 +39,8 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
   for(i in unique(cases)){
     test <- DESeq2::results(dds,contrast = c("phenotypes",i,control))
     test <- data.frame(test)
-    row.names(test) <- row.names(test)
+    print(head(test))
+    #row.names(test) <- row.names(test)
     if(!exists("de_res")){
       if(length(unique(cases)) == 1){
         de_res <- test
@@ -76,6 +77,7 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
   row.names(de_res) <- de_res$ensembl_gene_id #why is this needed?
   de_res$ensembl_gene_id <- NULL
   res[["test"]] <- de_res
+  print(head(de_res))
   res[["norm_counts"]] <- assay(varianceStabilizingTransformation(dds))
   res[["dds"]] <- dds
   res[["phenotypes"]] <- phenotypes
