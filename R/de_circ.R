@@ -24,12 +24,14 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     data$sum_junction <- data$total_junction
     data$gene_symbol <- gsub(data$circRNA_name,pattern = ".*[0-9]_",replacement = "") #this should remove the circRNA tag
     data <- merge(data, ensembl2id, by = "gene_symbol")
+    #circ2ensembl <- data[,c("ensembl_gene_id","circRNA_name")]
   }
   else {#if CIRI2 with BSJ/LIN
     data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
     data <- merge(data, ensembl2id, by = "ensembl_gene_id")
+    data$circRNA_name <- paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
     print(nrow(data))
-    row.names(data) <- paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
+    row.names(data) <- data$circRNA_name #paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
     junctions <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_BSJ$")
     linear <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_LIN$")
     colnames(data) = gsub(pattern = ".CIRI2.circRNAs.txt_BSJ|.CIRI2.circRNAs.txt_LIN", "", colnames(data))
@@ -37,7 +39,10 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     linear_data <- data[,linear]
     data$sum_lin <- apply(linear_data,1, FUN = sum)
     data$sum_junction <- data$Total_BSJ
+
+
   }
+  circ2ensembl <- data[,c("ensembl_gene_id","circRNA_name")]
   data$circToLin <- data$sum_junction/data$sum_lin
   row.names(data_lin) <- make.names(gsub("\\..+$", "",row.names(data_lin)),unique = T)
   circIDs <- row.names(junction_data)
@@ -48,8 +53,10 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   row.names(all_data) <- c(circIDs, linIDs)
   print(head(all_data))
   res <- count2deseq_analysis(input = input, countdata = all_data,pheno = pheno, i = i)
-  print(nrow( res[["test"]]))
+  print(nrow(res[["test"]]))
   res[["test"]] <- res[["test"]][row.names(res[["test"]])%in%circIDs,]
+  res$circRNA_name <- row.names(res)
+  res <- merge(res,circ2ensembl,by = "circRNA_name")
   print(nrow( res[["test"]]))
   print(table(circIDs%in%row.names(res[["test"]])))
   res[["test"]] <- res[["test"]][order(row.names(res[["test"]])),]

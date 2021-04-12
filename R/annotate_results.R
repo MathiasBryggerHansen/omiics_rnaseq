@@ -24,9 +24,9 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
   }
   else{
     temp <- data[["test"]]
-    print(head(temp))
-    temp$ensembl_gene_id <- data[["circ_info"]]$ensembl_gene_id
-    print(length(data[["circ_info"]]$ensembl_gene_id))
+    #print(head(temp))
+    #temp$ensembl_gene_id <- data[["circ_info"]]$ensembl_gene_id
+    #print(length(data[["circ_info"]]$ensembl_gene_id))
     data <- temp
     print(head(data))
   }
