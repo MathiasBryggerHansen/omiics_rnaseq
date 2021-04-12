@@ -22,7 +22,7 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     junctions <- grepl(colnames(data),pattern = "_SD$|_SA$")&!grepl(colnames(data),pattern = "total")
     print(head(data[,junctions][,seq(1,length(p),2)]))
     print(head(data[,junctions][,seq(2,length(p)*2,2)]))
-    junction_data <- data[,junctions][,seq(1,length(p),2)] + data[,junctions][,seq(2,length(p)*2,2)]
+    junction_data <- data[,junctions][,seq(1,length(p)*2,2)] + data[,junctions][,seq(2,length(p)*2,2)]
     colnames(junction_data) <- p
     data$sum_lin <- data$total_SD + data$total_SA
     data$sum_junction <- data$total_junction
