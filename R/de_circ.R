@@ -11,7 +11,6 @@
 
 
 de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
-  print(nrow(data))
   sampleNumber = length(pheno[[input$sample_col1]])
   #pheno <- data.frame(pheno[[1]])#data.frame(c(rep("S34F",3),rep("wt",3))
   p <- pheno[[input$sample_col1]]
@@ -40,7 +39,6 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     linear_data <- data[,linear]
     data$sum_lin <- apply(linear_data,1, FUN = sum)
     data$sum_junction <- data$Total_BSJ
-
   }
   circ2ensembl <- data[,c("ensembl_gene_id","circRNA_name")]
   data$circToLin <- data$sum_junction/data$sum_lin
@@ -48,25 +46,14 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   circIDs <- row.names(junction_data)
   linIDs <- row.names(data_lin)
   all_data <- rbind(junction_data, data_lin)
-  print(length(circIDs))
-  print(head(linIDs))
   row.names(all_data) <- c(circIDs, linIDs)
-  print("1")
   res <- count2deseq_analysis(input = input, countdata = all_data,pheno = pheno, i = i)
-  print("2")
-  print(head(row.names(res[["test"]])))
   all_IDs <- row.names(res[["test"]])
   res[["test"]] <- data.frame(res[["test"]])
-  print("3")
   res[["test"]] <- res[["test"]][all_IDs%in%circIDs,]
   res[["test"]]$circRNA_name <- row.names(res[["test"]])
-  print(head(res[["test"]]))
-  print("4")
   res[["test"]] <- merge(res[["test"]],circ2ensembl,by = "circRNA_name")
-  print("5")
-  print(table(circIDs%in%row.names(res[["test"]])))
   res[["test"]] <- res[["test"]][order(row.names(res[["test"]])),]
-
   data <- data[order(row.names(data)),] #make sure that the ids match in order from info file and DE res
   res[["circ_info"]] <- data[,c("ensembl_gene_id","circToLin","sum_lin","sum_junction")]
   return(res)
