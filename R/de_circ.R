@@ -60,6 +60,9 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   print("3")
   res[["test"]] <- res[["test"]][all_IDs%in%circIDs,]
   res$circRNA_name <- row.names(res)
+  print(head(res))
+  print(head(circ2ensembl))
+  print(str(res))
   print("4")
   res <- merge(res,circ2ensembl,by = "circRNA_name")
   print("5")
