@@ -11,6 +11,7 @@
 
 
 de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
+  print(nrow(data))
   sampleNumber = length(pheno[[input$sample_col1]])
   #pheno <- data.frame(pheno[[1]])#data.frame(c(rep("S34F",3),rep("wt",3))
   p <- pheno[[input$sample_col1]]
@@ -27,6 +28,7 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   else {#if CIRI2 with BSJ/LIN
     data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
     data <- merge(data, ensembl2id, by = "ensembl_gene_id")
+    print(nrow(data))
     row.names(data) <- paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
     junctions <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_BSJ$")
     linear <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_LIN$")
@@ -41,12 +43,15 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   circIDs <- row.names(junction_data)
   linIDs <- row.names(data_lin)
   all_data <- rbind(junction_data, data_lin)
-  print(head(circIDs))
+  print(length(circIDs))
   print(head(linIDs))
   row.names(all_data) <- c(circIDs, linIDs)
   print(head(all_data))
   res <- count2deseq_analysis(input = input, countdata = all_data,pheno = pheno, i = i)
+  print(nrow( res[["test"]]))
   res[["test"]] <- res[["test"]][circIDs%in%row.names(res[["test"]]),]
+  print(nrow( res[["test"]]))
+  print(table(circIDs%in%row.names(res[["test"]])))
   res[["test"]] <- res[["test"]][order(row.names(res[["test"]])),]
   print(head(res[["test"]]))
   data <- data[order(row.names(data)),] #make sure that the ids match in order from info file and DE res
