@@ -15,7 +15,10 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   #pheno <- data.frame(pheno[[1]])#data.frame(c(rep("S34F",3),rep("wt",3))
   p <- pheno[[input$sample_col1]]
   ##if the SA/SD method is used, sum up these:
-  if(sum(grepl(colnames(data),pattern = "_SA$")) == sampleNumber){
+  print(grepl(colnames(data),pattern = "_SA$")&!grepl(colnames(data),pattern = "total"))
+  print(sampleNumber)
+  if(sum(grepl(colnames(data),pattern = "_SA$")&!grepl(colnames(data),pattern = "total")) == sampleNumber){
+    print("SA")
     junctions <- grepl(colnames(data),pattern = "_SD$|_SA$")&!grepl(colnames(data),pattern = "total")
     print(head(data[,junctions][,seq(1,length(p),2)]))
     print(head(data[,junctions][,seq(2,length(p)*2,2)]))
@@ -32,6 +35,7 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     #circ2ensembl <- data[,c("ensembl_gene_id","circRNA_name")]
   }
   else {#if CIRI2 with BSJ/LIN
+    print("BSJ")
     data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
     print(head(data))
     data <- merge(data, ensembl2id, by = "ensembl_gene_id", all.x =T)
