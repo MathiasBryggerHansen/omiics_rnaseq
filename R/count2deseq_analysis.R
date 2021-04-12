@@ -33,6 +33,7 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
                           phenotypes=phenotypes)
     dds <- DESeq2::DESeqDataSetFromMatrix(countData=countdata, samples, design=~phenotypes)
   }
+  print("deseq")
   dds$phenotypes <- relevel(dds$phenotypes, control) #sets the control group
   dds <- DESeq2::DESeq(dds)
   cases <- as.vector(unlist(phenotypes[!phenotypes%in%control]))
