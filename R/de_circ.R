@@ -19,15 +19,10 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     junctions <- grepl(colnames(data),pattern = "_SD$|_SA$")&!grepl(colnames(data),pattern = "total")
     junction_data <- data[,junctions][,seq(1,length(p),2)] + data[,junctions][,seq(2,length(p),2)]
     colnames(junction_data) <- p
-    #junction_data$gene_symbol <- data$gene_symbol
     data$sum_lin <- data$total_SD + data$total_SA
     data$sum_junction <- data$total_junction
     data$gene_symbol <- gsub(data$circRNA_name,pattern = ".*[0-9]_",replacement = "") #this should remove the circRNA tag
     data <- merge(data, ensembl2id, by = "gene_symbol")
-    #junction_data <- merge(junction_data, ensembl2id, by = "gene_symbol")
-    #junction_data$wikigene_id <- NULL
-    #junction_data$gene_biotype <- NULL
-
   }
   else {#if CIRI2 with BSJ/LIN
     data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
@@ -37,24 +32,17 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     linear <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_LIN$")
     colnames(data) = gsub(pattern = ".CIRI2.circRNAs.txt_BSJ|.CIRI2.circRNAs.txt_LIN", "", colnames(data))
     junction_data <- data[,junctions]
-    #junction_data$ensembl_gene_id <- data$ensembl_gene_id
     linear_data <- data[,linear]
     data$sum_lin <- apply(linear_data,1, FUN = sum)
     data$sum_junction <- data$Total_BSJ
   }
   data$circToLin <- data$sum_junction/data$sum_lin
-  print(head(junction_data))
-  print(head(data_lin))
   row.names(data_lin) <- make.names(gsub("\\..+$", "",row.names(data_lin)),unique = T)
   junction_data <- rbind(junction_data, data_lin)
   res <- count2deseq_analysis(input = input, countdata = junction_data,pheno = pheno, i = i)
-  print(head(row.names(junction_data)))
-  print(head(row.names(res)))
   res[["test"]] <- res[["test"]][row.names(res)%in%row.names(junction_data),]
-  print(tail(res[["test"]]))
   res[["test"]] <- res[["test"]][order(row.names(res[["test"]])),]
   data <- data[order(row.names(data)),] #make sure that the ids match in order from info file and DE res
-  print(colnames(data))
   res[["circ_info"]] <- data[,c("ensembl_gene_id","circToLin","sum_lin","sum_junction")]
   return(res)
 }

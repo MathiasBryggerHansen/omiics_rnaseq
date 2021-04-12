@@ -12,7 +12,6 @@ volcano_plot <- function(input, data, pathway_dic){
   col_nr <- grep(colnames(data),pattern = gsub(input$volcano_col,pattern = "-",replacement = "_"))[1]
   col_vals <- c(data[,col_nr])
   col_text <- c(data[,col_nr])
-  #req(length(unique(col_vals)) < 100)
   if(sum(sapply(col_vals,is.numeric))>10){
     if(input$log_scale){
       if(min(col_vals,na.rm = T) >= 0&max(col_vals,na.rm = T) <= 1){
@@ -33,11 +32,8 @@ volcano_plot <- function(input, data, pathway_dic){
     if(length(unique(col_vals)) > 4){ #avoid matching with overwhelming annotation
       showNotification("the matching term exceeds 4 unique identifiers, only the 4 indentifiers with highest frequency is shown",type = "message")
       keep_vals <- names(table(col_vals)[order(table(col_vals),decreasing = T)][1:4])
-      print(keep_vals)
       col_text <- col_vals
       col_vals <- ifelse(col_vals%in%keep_vals, col_vals, "Other")
-
-      #col_nr <- grep(colnames(data),pattern = "gene_biotype")[1]
     }
     col_vals <- factor(col_vals)
     legend_name <- colnames(data)[col_nr]
@@ -82,7 +78,6 @@ volcano_plot <- function(input, data, pathway_dic){
       h <- input$col_high
       l <- input$col_low
     }
-    #req(isColor(input$col_high)&isColor(input$col_low))
     g <- g + scale_color_gradient(high = h, low = l)
   }
   p <- ggplotly(g,tooltip = "text") %>%

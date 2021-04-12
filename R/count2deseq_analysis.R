@@ -18,9 +18,6 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
   control <- input[[paste0("control",i)]]
   case <- input[[paste0("case",i)]]
   phenotypes <- factor(pheno[[input[[paste0("group_col",i)]]]]) #1 --> i
-  print(phenotypes)
-  print(case)
-  print(control)
   if(input$batch_correction&ncol(pheno)>1){#values need to be updated if batch correction is chosen
     batch <- pheno[[input$batch_col1]]
     samples <- data.frame(row.names=colnames(countdata),
@@ -40,7 +37,9 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
   dds <- DESeq2::DESeq(dds)
   cases <- as.vector(unlist(phenotypes[!phenotypes%in%control]))
   for(i in unique(cases)){
-    test <- data.frame(DESeq2::results(dds,contrast = c("phenotypes",i,control)))
+    test <- DESeq2::results(dds,contrast = c("phenotypes",i,control))
+    test <- data.frame(test)
+    row.names(test) <- row.names(test)
     if(!exists("de_res")){
       if(length(unique(cases)) == 1){
         de_res <- test
@@ -63,7 +62,7 @@ count2deseq_analysis <- function(input, countdata, pheno, i){
       if (i == case){
         colnames(test) <- c("baseMean","log2FoldChange","lfcSE","stat","pvalue","padj")
         test <- test[,c("log2FoldChange","padj")]
-        test$ensembl_gene_id <- row.names(test)
+        test$ensembl_gene_id <- row.names(test)##row.names are not ensembl if circRNA
         de_res <- merge(de_res, test, by = "ensembl_gene_id")
       }
       else {

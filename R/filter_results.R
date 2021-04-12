@@ -15,8 +15,5 @@ filter_results <- function(input, data){
   else {
     res <- rbind(data_sign,data_not_sign_10)
   }
-  print(head(res))
-  #print(head(data_sign))
-  #print(str(rbind(data_sign,data_not_sign_10)))
   return(res)
 }
