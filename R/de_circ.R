@@ -17,10 +17,13 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   ##if the SA/SD method is used, sum up these:
   if(sum(grepl(colnames(data),pattern = "_SA$")) == sampleNumber){
     junctions <- grepl(colnames(data),pattern = "_SD$|_SA$")&!grepl(colnames(data),pattern = "total")
-    junction_data <- data[,junctions][,seq(1,length(p),2)] + data[,junctions][,seq(2,length(p),2)]
+    print(head(data[,junctions][,seq(1,length(p),2)]))
+    print(head(data[,junctions][,seq(2,length(p)*2,2)]))
+    junction_data <- data[,junctions][,seq(1,length(p),2)] + data[,junctions][,seq(2,length(p)*2,2)]
     colnames(junction_data) <- p
     data$sum_lin <- data$total_SD + data$total_SA
     data$sum_junction <- data$total_junction
+    print(head(data))
     data$gene_symbol <- gsub(data$circRNA_name,pattern = ".*[0-9]_",replacement = "") #this should remove the circRNA tag
     print(head(data))
     print(head(ensembl2id))
