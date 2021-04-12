@@ -23,12 +23,13 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     data$sum_lin <- data$total_SD + data$total_SA
     data$sum_junction <- data$total_junction
     data$gene_symbol <- gsub(data$circRNA_name,pattern = ".*[0-9]_",replacement = "") #this should remove the circRNA tag
-    data <- merge(data, ensembl2id, by = "gene_symbol")
+    data <- merge(data, ensembl2id, by = "gene_symbol", all.x =T)
     #circ2ensembl <- data[,c("ensembl_gene_id","circRNA_name")]
   }
   else {#if CIRI2 with BSJ/LIN
     data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
-    data <- merge(data, ensembl2id, by = "ensembl_gene_id")
+    print(head(data))
+    data <- merge(data, ensembl2id, by = "ensembl_gene_id", all.x =T)
     data$circRNA_name <- paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
     print(nrow(data))
     row.names(data) <- data$circRNA_name #paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
@@ -39,7 +40,6 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     linear_data <- data[,linear]
     data$sum_lin <- apply(linear_data,1, FUN = sum)
     data$sum_junction <- data$Total_BSJ
-
 
   }
   circ2ensembl <- data[,c("ensembl_gene_id","circRNA_name")]
@@ -54,7 +54,10 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   print(head(all_data))
   res <- count2deseq_analysis(input = input, countdata = all_data,pheno = pheno, i = i)
   print(nrow(res[["test"]]))
-  res[["test"]] <- res[["test"]][row.names(res[["test"]])%in%circIDs,]
+  head(row.names(res[["test"]]))
+  all_IDs <- row.names(res[["test"]])
+  res[["test"]] <- data.frame(res[["test"]])
+  res[["test"]] <- res[["test"]][all_IDs%in%circIDs,]
   res$circRNA_name <- row.names(res)
   res <- merge(res,circ2ensembl,by = "circRNA_name")
   print(nrow( res[["test"]]))
