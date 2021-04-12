@@ -54,7 +54,7 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   print(head(all_data))
   res <- count2deseq_analysis(input = input, countdata = all_data,pheno = pheno, i = i)
   print(nrow(res[["test"]]))
-  head(row.names(res[["test"]]))
+  print(head(row.names(res[["test"]])))
   all_IDs <- row.names(res[["test"]])
   res[["test"]] <- data.frame(res[["test"]])
   res[["test"]] <- res[["test"]][all_IDs%in%circIDs,]
