@@ -27,7 +27,7 @@ update_atlas <- function(atlas_id = F, gene_data, input){
     temp <- temp[,c("padj","log2FoldChange")] #change, since there may be more
 
     colnames(temp) <- paste(colnames(temp),n,sep = "_")
-    temp$ensembl_gene_id <- row.names(temp)
+    temp[[id]] <- row.names(temp)
 
     if(fir){
       temp2 <- merge(gene_data, temp, by = id,all.x = T)
