@@ -26,7 +26,7 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
     temp <- data[["test"]]
     print(head(temp))
     print(head(data[["circ_info"]]))
-    data <- merge(data[["circ_info"]], temp, by = "ensembl_gene_id")
+    data <- merge(data[["circ_info"]], temp, by = "circRNA_name")
     #print(length(data[["circ_info"]]$ensembl_gene_id))
   }
   data <- merge(data,ensembl2id,by = "ensembl_gene_id",all.x = T)#ensembl2id() includes : gene_symbol, wiki_id, biotype
