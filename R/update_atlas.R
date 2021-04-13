@@ -16,18 +16,25 @@ update_atlas <- function(atlas_id = F, gene_data, input){
     return(gene_data)
   }
   fir <- T
+  if(input$species == "rat"){#standard id used for rat is from mouse
+    id <- "ensembl_gene_id_rat"
+  }
+  else{
+    id <- "ensembl_gene_id"
+  }
   for(n in names(atlas)){
     temp <- atlas[[n]]
     temp <- temp[,c("padj","log2FoldChange")] #change, since there may be more
 
     colnames(temp) <- paste(colnames(temp),n,sep = "_")
     temp$ensembl_gene_id <- row.names(temp)
+
     if(fir){
-      temp2 <- merge(gene_data, temp, by = "ensembl_gene_id",all.x = T)
+      temp2 <- merge(gene_data, temp, by = id,all.x = T)
       fir <- F
     }
     else{
-      temp2 <- merge(temp2, temp, by = "ensembl_gene_id",all.x = T)
+      temp2 <- merge(temp2, temp, by = id,all.x = T)
     }
   }
   return(temp2)

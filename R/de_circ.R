@@ -15,8 +15,6 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   #pheno <- data.frame(pheno[[1]])#data.frame(c(rep("S34F",3),rep("wt",3))
   p <- pheno[[input$sample_col1]]
   ##if the SA/SD method is used, sum up these:
-  print(grepl(colnames(data),pattern = "_SA$")&!grepl(colnames(data),pattern = "total"))
-  print(sampleNumber)
   if(sum(grepl(colnames(data),pattern = "_SA$")&!grepl(colnames(data),pattern = "total")) == sampleNumber){
     print("SA")
     row.names(data) <- data$circRNA_name
