@@ -17,7 +17,6 @@
 #' @return data.frame
 
 annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic, circ = F){
-
   if(!circ){#circRNA standard data structure does not include id column
     data <- data[["test"]]
     data$ensembl_gene_id <- row.names(data)
@@ -29,9 +28,6 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
     #print(length(data[["circ_info"]]$ensembl_gene_id))
     data <- temp
   }
-  print(head(data))
-  print("spec")
-  print(spec)
   data <- merge(data,ensembl2id,by = "ensembl_gene_id",all.x = T)#ensembl2id() includes : gene_symbol, wiki_id, biotype
   data$gene_symbol <- gsub(make.names(ifelse(is.na(data$gene_symbol)|data$gene_symbol=="",data$ensembl_gene_id,data$gene_symbol),unique = T),pattern = ".",replacement = "-",fixed = T)
   if(input$species == "human"|input$species == "mouse"|input$species == "rat"){ #Transcription factor annotation
@@ -62,8 +58,6 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
 
   if(input$species == "rat"){
     data <- merge(data, id_conv, by.x = "ensembl_gene_id", by.y = "Mouse") #since mouse is the standard using rat
-    print("conv")
-    print(head(data))
     data$ensembl_gene_id_rat <- data$Rat
     data$Rat <- NULL
     data$Human <- NULL
