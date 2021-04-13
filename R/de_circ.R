@@ -25,8 +25,10 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
     data$sum_lin <- data$total_SD + data$total_SA
     data$sum_junction <- data$total_junction
     data$gene_symbol <- gsub(data$circRNA_name,pattern = ".*[0-9]_",replacement = "") #this should remove the circRNA tag
-    print(head(ensembl2id))
+    print(head(data))
     data <- merge(data, ensembl2id, by = "gene_symbol", all.x =T)
+    print("gene_symbol")
+    print(head(data))
     #circ2ensembl <- data[,c("ensembl_gene_id","circRNA_name")]
   }
   else {#if CIRI2 with BSJ/LIN
