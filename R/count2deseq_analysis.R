@@ -11,6 +11,8 @@
 #' @export count2deseq_analysis
 
 count2deseq_analysis <- function(input, countdata, pheno, i){
+  print("count2deseq")
+  print(head(countdata))
   row.names(countdata) <- make.names(gsub("\\..+$", "",row.names(countdata)),unique = T)
   line = gsub("_.$", "",colnames(countdata))
   line = factor(line)
