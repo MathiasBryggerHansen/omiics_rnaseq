@@ -28,10 +28,14 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
     #print(length(data[["circ_info"]]$ensembl_gene_id))
     data <- temp
   }
+  print(head(data))
+  print("spec")
+  print(spec)
   data <- merge(data,ensembl2id,by = "ensembl_gene_id",all.x = T)#ensembl2id() includes : gene_symbol, wiki_id, biotype
   data$gene_symbol <- gsub(make.names(ifelse(is.na(data$gene_symbol)|data$gene_symbol=="",data$ensembl_gene_id,data$gene_symbol),unique = T),pattern = ".",replacement = "-",fixed = T)
   if(input$species == "human"|input$species == "mouse"|input$species == "rat"){ #Transcription factor annotation
     tf_data <- read.table(paste0("data/trrust_rawdata.",spec,".tsv"),header = T) #this could be more general
+    print(head(tf_data))
     tf_data$position <- NULL
     data$TF <- data$gene_symbol%in%tf_data$gene_symbol
   }
@@ -57,6 +61,8 @@ annotate_results <- function(input, data, ensembl2id, id_conv, spec, pathway_dic
 
   if(input$species == "rat"){
     data <- merge(data, id_conv, by.x = "ensembl_gene_id", by.y = "Mouse") #since mouse is the standard using rat
+    print("conv")
+    print(head(data))
     data$ensembl_gene_id_rat <- data$Rat
     data$Rat <- NULL
     data$Human <- NULL

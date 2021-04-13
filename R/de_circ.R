@@ -20,27 +20,19 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   if(sum(grepl(colnames(data),pattern = "_SA$")&!grepl(colnames(data),pattern = "total")) == sampleNumber){
     print("SA")
     junctions <- grepl(colnames(data),pattern = "_SD$|_SA$")&!grepl(colnames(data),pattern = "total")
-    print(head(data[,junctions][,seq(1,length(p),2)]))
-    print(head(data[,junctions][,seq(2,length(p)*2,2)]))
     junction_data <- data[,junctions][,seq(1,length(p)*2,2)] + data[,junctions][,seq(2,length(p)*2,2)]
     colnames(junction_data) <- p
     data$sum_lin <- data$total_SD + data$total_SA
     data$sum_junction <- data$total_junction
-    print(head(data))
     data$gene_symbol <- gsub(data$circRNA_name,pattern = ".*[0-9]_",replacement = "") #this should remove the circRNA tag
-    print(head(data))
     print(head(ensembl2id))
     data <- merge(data, ensembl2id, by = "gene_symbol", all.x =T)
-    print(head(data))
     #circ2ensembl <- data[,c("ensembl_gene_id","circRNA_name")]
   }
   else {#if CIRI2 with BSJ/LIN
-    print("BSJ")
     data$ensembl_gene_id <- gsub(data$gene_id,pattern = "\\..*",replacement = "")
-    print(head(data))
     data <- merge(data, ensembl2id, by = "ensembl_gene_id", all.x =T)
     data$circRNA_name <- paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
-    print(nrow(data))
     row.names(data) <- data$circRNA_name #paste(data$Internal_circRNA_ID, data$gene_symbol, sep = "_")
     junctions <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_BSJ$")
     linear <- grepl(colnames(data),pattern = "CIRI2.circRNAs.txt_LIN$")
@@ -53,7 +45,6 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   circ2ensembl <- data[,c("ensembl_gene_id","circRNA_name")]
   data$circToLin <- data$sum_junction/data$sum_lin
   row.names(data_lin) <- make.names(gsub("\\..+$", "",row.names(data_lin)),unique = T)
-  print("1")
   circIDs <- row.names(junction_data)
   linIDs <- row.names(data_lin)
   all_data <- rbind(junction_data, data_lin)
