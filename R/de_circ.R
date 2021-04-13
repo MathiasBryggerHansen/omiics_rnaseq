@@ -58,6 +58,6 @@ de_circ <- function(input, data, data_lin, pheno, ensembl2id, i){
   res[["test"]] <- merge(res[["test"]],circ2ensembl,by = "circRNA_name")
   res[["test"]] <- res[["test"]][order(row.names(res[["test"]])),]
   data <- data[order(row.names(data)),] #make sure that the ids match in order from info file and DE res
-  res[["circ_info"]] <- data[,c("circRNA_name","ensembl_gene_id","circToLin","sum_lin","sum_junction")]
+  res[["circ_info"]] <- data[,c("ensembl_gene_id","circToLin","sum_lin","sum_junction")]#circRNA_name
   return(res)
 }
